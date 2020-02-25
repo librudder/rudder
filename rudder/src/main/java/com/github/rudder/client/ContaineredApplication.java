@@ -1,6 +1,7 @@
 package com.github.rudder.client;
 
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.command.CreateContainerResponse;
 import com.github.dockerjava.api.command.InspectContainerResponse;
 import com.github.dockerjava.api.model.*;
@@ -10,16 +11,18 @@ import com.github.rudder.shared.HttpApp;
 import com.github.rudder.shared.InvocationController;
 import com.github.rudder.shared.ObjectStorage;
 import io.github.classgraph.ClassGraph;
-import io.netty.util.internal.SocketUtils;
 import org.apache.http.util.TextUtils;
 import retrofit2.Retrofit;
 
+import java.io.Closeable;
 import java.io.IOException;
 import java.net.Inet4Address;
 import java.net.NetworkInterface;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -109,6 +112,36 @@ public class ContaineredApplication<T> {
 
         cmd.addAll(args);
 
+        final CountDownLatch latch = new CountDownLatch(1);
+        dockerClient.pullImageCmd(container).exec(new ResultCallback<>() {
+            @Override
+            public void onStart(final Closeable closeable) {
+
+            }
+
+            @Override
+            public void onNext(final PullResponseItem pullResponseItem) {
+
+            }
+
+            @Override
+            public void onError(final Throwable throwable) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                latch.countDown();
+            }
+
+            @Override
+            public void close() throws IOException {
+
+            }
+        });
+
+        latch.await(10, TimeUnit.MINUTES);
+
         CreateContainerResponse createdContainer = dockerClient
                 .createContainerCmd(container)
                 .withEnv()
@@ -165,7 +198,6 @@ public class ContaineredApplication<T> {
         }
         return createProxy(coordinatorClient, objectStorage, uid, clazz);
     }
-
 
 
     public T getApplicationTest() throws Exception {
