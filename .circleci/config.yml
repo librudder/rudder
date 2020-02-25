@@ -13,11 +13,12 @@ jobs:
     environment:
       # Customize the JVM maximum heap limit
       MAVEN_OPTS: -Xmx3200m
+      JAVA_HOME: /usr/lib/jvm/java-11-openjdk-amd64/
 
     steps:
       - openjdk-install/openjdk:
           version: 11
-      - run: rm -rf .openjdk_version && export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
+      - run: rm -rf .openjdk_version
       - checkout
 
       # Download and cache dependencies
