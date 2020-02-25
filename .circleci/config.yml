@@ -17,7 +17,7 @@ jobs:
     steps:
       - openjdk-install/openjdk:
           version: 11
-      - run: rm -rf .openjdk_version
+      - run: rm -rf .openjdk_version && export JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64/
       - checkout
 
       # Download and cache dependencies
