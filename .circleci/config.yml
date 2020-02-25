@@ -17,7 +17,6 @@ jobs:
     steps:
       - openjdk-install/openjdk:
           version: 11
-
       - checkout
 
       # Download and cache dependencies
