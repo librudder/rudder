@@ -2,7 +2,10 @@
 #
 # Check https://circleci.com/docs/2.0/language-java/ for more details
 #
-version: 2
+version: 2.1
+orbs:
+  openjdk-install: cloudesire/openjdk-install@1.2.3
+
 jobs:
   build:
     machine:
@@ -12,6 +15,9 @@ jobs:
       MAVEN_OPTS: -Xmx3200m
 
     steps:
+      - openjdk-install/openjdk:
+          version: 11
+
       - checkout
 
       # Download and cache dependencies
