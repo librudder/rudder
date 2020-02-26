@@ -10,44 +10,8 @@ include::_installation.adoc[]
 :numbered:
 == Usage
 
-Inherit from application you want to test. This application must have
-`public static void main` method and must implement
-`RudderApplication<T>` where T is application class. Also
-there must be a static `setReadyCallback(Consumer<T>)`
+include::_simple_example.adoc[]
 
-Example:
-
-[source,java]
-----
-import java.util.function.Consumer;// class to test
-class TestApplication {
-    public static void main(String[] args){
-
-    }
-}
-
-class TestRudderApplication implements RudderApplication<TestRudderApplication> {
-
-    private static Consumer<TestRudderApplication> callback;
-
-    public static void setReadyCallback(final Consumer<TestRudderApplication> callback) {
-        TestRudderApplication.callback = callback;
-    }
-
-    public static void main(String[] args){
-        TestApplication.main(args);
-        callback.apply(new TestRudderApplicatiion());
-    }
-
-}
-----
-
-[source, java]
-----
-Class<?> clazz = TestApplication.class;
-var z = new ContaineredApplication<>("SomeName", "openjdk11", clazz, List.of("raz", "dva"));
-----
-
-To see the list of all Hazelcast registration related configuration properties please check link:appendix.html[the Appendix page].
+For more real life examples please check link:spring_example.html[Spring example].
 
 
