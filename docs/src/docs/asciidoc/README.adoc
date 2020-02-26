@@ -1,0 +1,51 @@
+= rudder
+
+[.float-group]
+--
+image::https://img.shields.io/lgtm/grade/java/g/librudder/rudder.svg?logo=lgtm&logoWidth=18["Language grade: Java", link="https://lgtm.com/projects/g/librudder/rudder/context:java", float="left"]
+image::https://circleci.com/gh/librudder/rudder.svg?style=svg["CircleCI", link="https://circleci.com/gh/librudder/rudder", float="left"]
+[.left]
+image::https://codecov.io/gh/librudder/rudder/branch/master/graph/badge.svg["CodeCov", link="https://codecov.io/gh/librudder/rudder"]
+--
+
+
+include::_intro.adoc[]
+
+== Installation
+include::_installation.adoc[]
+
+== Hazelcast overview
+
+Features of Hazelcast
+
+* Key-value database
+* Distributed cache
+* In-memory computing
+* Distributed locking and sessions
+* NoSQL data store
+
+See the https://hazelcast.org/features/[official page] for more information.
+
+== Spring Cloud Hazelcast Registration Features
+
+* Hazelcast `DiscoveryStrategy` implementation
+** supports Consul
+* `PropertySource` for Consul registration loaded during the 'bootstrap' phase.
+
+== Running the sample
+
+1. Run `docker-compose up`
+2. Verify consul is running by visiting http://localhost:8500
+3. Run `mvn package` this will bring in the required spring cloud maven repositories and build
+4. Run `java -jar spring-cloud-consul-sample/target/spring-cloud-consul-sample-${VERSION}.jar`
+5. visit http://localhost:8080, verify that `{"serviceId":"<yourhost>:8080","host":"<yourhost>","port":8080}` results
+6. run `java -jar spring-cloud-consul-sample/target/spring-cloud-consul-sample-${VERSION}.jar --server.port=8081`
+7. visit http://localhost:8080 again, verify that `{"serviceId":"<yourhost>:8081","host":"<yourhost>","port":8081}` eventually shows up in the results in a round robbin fashion (may take a minute or so).
+
+== Building
+
+//include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/docs/src/main/asciidoc/building-jdk8.adoc[]
+
+== Contributing
+
+//include::https://raw.githubusercontent.com/spring-cloud/spring-cloud-build/master/docs/src/main/asciidoc/contributing.adoc[]

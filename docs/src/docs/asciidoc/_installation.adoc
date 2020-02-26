@@ -1,0 +1,16 @@
+:numbered!:
+
+=== Maven
+Add this to your pom.xml:
+----
+<dependency>
+    <groupId>com.github.librudder</groupId>
+    <artifactId>rudder</artifactId>
+    <version></version>
+</dependency>
+----
+=== Gradle
+Add this to your build.gradle:
+----
+implementation 'com.github.librudder:rudder:'
+----
