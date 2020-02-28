@@ -1,3 +1,4 @@
+:source-highlighter: highlightjs
 include::_attributes.adoc[]
 = *{project-full-name}*
 
@@ -12,6 +13,6 @@ include::_installation.adoc[]
 
 include::_simple_example.adoc[]
 
-For more real life examples please check link:spring_example.html[Spring example].
+For more real life example check link:spring_example.html[Spring example].
 
 

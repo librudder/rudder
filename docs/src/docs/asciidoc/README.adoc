@@ -18,10 +18,15 @@ include::_installation.adoc[]
 
 include::_simple_example.adoc[]
 
-For more real life examples please check link:spring_example.html[Spring example].
+For more real life example check link:spring_example.html[Spring example].
 
 == Building
-
+Just run
+[source,sh,subs="attributes+"]
+----
+./mvnw clean install
+----
+in the root project directory
 
 == Contributing
 

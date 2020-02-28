@@ -14,3 +14,4 @@
 :sc-ext: java
 :project-full-name: rudder
 :all: {asterisk}{asterisk}
+:source-highlighter: highlightjs
