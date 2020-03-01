@@ -13,12 +13,49 @@
 
     <properties>
         <docs.resources.dir>${project.build.directory}/build-docs</docs.resources.dir>
-        <main.basedir>${basedir}</main.basedir>
+        <main.basedir>${parent.basedir}</main.basedir>
+        <refdocs.build.directory>${project.build.directory}/refdocs/</refdocs.build.directory>
         <antelopetasks.version>3.2.10</antelopetasks.version>
         <ant-nodeps.version>1.8.1</ant-nodeps.version>
         <jruby-complete.version>9.2.10.0</jruby-complete.version>
         <asciidoctorj.version>2.2.0</asciidoctorj.version>
+        <maven-dependency-plugin-for-docs.phase>generate-resources</maven-dependency-plugin-for-docs.phase>
+        <ant-contrib.version>1.0b3</ant-contrib.version>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>ant-contrib</groupId>
+            <artifactId>ant-contrib</artifactId>
+            <version>${ant-contrib.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ant</groupId>
+                    <artifactId>ant</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-nodeps</artifactId>
+            <version>${ant-nodeps.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tigris.antelope</groupId>
+            <artifactId>antelopetasks</artifactId>
+            <version>${antelopetasks.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jruby</groupId>
+            <artifactId>jruby-complete</artifactId>
+            <version>${jruby-complete.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj</artifactId>
+            <version>${asciidoctorj.version}</version>
+        </dependency>
+    </dependencies>
 
 
     <profiles>
@@ -83,6 +120,15 @@
                                 <configuration>
                                     <backend>html5</backend>
                                     <sourceHighlighter>highlight.js</sourceHighlighter>
+                                    <sourceDirectory>${refdocs.build.directory}</sourceDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${refdocs.build.directory}</directory>
+                                            <excludes>
+                                                <exclude>**/*.*adoc</exclude>
+                                            </excludes>
+                                        </resource>
+                                    </resources>
                                     <!--
                                     Scenarios for linking vs embedding assets:
                                     Link to both stylesheets and images::
@@ -155,87 +201,6 @@
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>3.1.1</version>
                     </plugin>
-
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>${maven-antrun-plugin.version}</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>ant-contrib</groupId>
-                                <artifactId>ant-contrib</artifactId>
-                                <version>1.0b3</version>
-                                <exclusions>
-                                    <exclusion>
-                                        <groupId>ant</groupId>
-                                        <artifactId>ant</artifactId>
-                                    </exclusion>
-                                </exclusions>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.apache.ant</groupId>
-                                <artifactId>ant-nodeps</artifactId>
-                                <version>${ant-nodeps.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.tigris.antelope</groupId>
-                                <artifactId>antelopetasks</artifactId>
-                                <version>${antelopetasks.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.jruby</groupId>
-                                <artifactId>jruby-complete</artifactId>
-                                <version>${jruby-complete.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.asciidoctor</groupId>
-                                <artifactId>asciidoctorj</artifactId>
-                                <version>${asciidoctorj.version}</version>
-                            </dependency>
-                        </dependencies>
-                        <executions>
-                            <execution>
-                                <id>readme</id>
-                                <phase>process-resources</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <java classname="org.jruby.Main"
-                                              failonerror="yes">
-                                            <arg value="${docs.resources.dir}/ruby/generate_readme.sh"/>
-                                            <arg value="-o"/>
-                                            <arg value="${main.basedir}/README.adoc"/>
-                                        </java>
-                                    </target>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>assert-no-unresolved-links</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <fileset id="unresolved.file" dir="${basedir}/target/generated-docs/"
-                                                 includes="**/*.html">
-                                            <contains text="Unresolved"/>
-                                        </fileset>
-                                        <fail message="[Unresolved] Found...failing">
-                                            <condition>
-                                                <resourcecount when="greater"
-                                                               count="0"
-                                                               refid="unresolved.file"/>
-                                            </condition>
-                                        </fail>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
                 </plugins>
             </build>
         </profile>

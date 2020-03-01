@@ -2,8 +2,8 @@
 
 base_dir = File.join(File.dirname(__FILE__),'../../..')
 src_dir = File.join(base_dir, "/src/main/asciidoc")
-require 'asciidoctor'
 require 'optparse'
+require 'asciidoctor'
 
 options = {}
 file = "#{src_dir}/README.adoc"
