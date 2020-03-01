@@ -21,7 +21,7 @@ public class Coordinator {
 
         final Class<?> appClass = Class.forName(className);
         if (!RudderApplication.class.isAssignableFrom(appClass)) {
-            System.err.println("WARNING! This app can't notify that it is running");
+            throw new IllegalApplicationException("This app is not a RudderApplication and can't notify that it is running, aborting.");
         }
 
         final Method setReadyCallback = Util.findMethod(appClass, "setReadyCallback", new Class[]{Consumer.class});
