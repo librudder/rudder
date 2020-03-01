@@ -12,7 +12,6 @@ import java.util.function.Consumer;
 @RunWith(JUnit4.class)
 public class ClientTest {
 
-
     @Test
     public void interfaceTest() throws Throwable {
         final Long someNum = 1337L;
