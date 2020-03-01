@@ -37,13 +37,13 @@ public class Coordinator {
                 final HttpApp httpApp = new HttpApp(COORDINATOR_CONTROL_PORT);
 
                 final InvocationController invocationController = new InvocationController(objectStorage);
-                httpApp.add("/hello", new HelloController(mainObjectId, port -> {
-                    final Retrofit retrofit = Runner.createRetrofit("jainer.host", port);
+                httpApp.add(new HelloController(mainObjectId, port -> {
+                    final Retrofit retrofit = Runner.createRetrofit("rudder.host", port);
                     final InvocationClient invocationClient = retrofit.create(InvocationClient.class);
                     invocationController.setClient(invocationClient);
                 }));
 
-                httpApp.add("/invoke", invocationController);
+                httpApp.add(invocationController);
 
                 httpApp.start();
             }

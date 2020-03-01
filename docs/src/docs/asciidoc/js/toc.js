@@ -27,7 +27,7 @@ if (toctitle != null) {
     }
 }
 
-var headerHtml = '<div id="header-spring">\n' +
+var headerHtml = '<div id="header-rudder">\n' +
     '<h1>\n' +
     '<?xml version="1.0" encoding="UTF-8"?>\n' +
     '<svg width="203px" height="76px" viewBox="0 0 203 76" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">\n' +

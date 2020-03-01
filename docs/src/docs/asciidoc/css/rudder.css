@@ -1663,7 +1663,7 @@ div.back-action a:hover span, #toc.toc2 div.back-action a:hover span {
     padding-top: .8rem
 }
 
-#header-spring {
+#header-rudder {
     position: absolute;
     text-rendering: optimizeLegibility;
     top: 0;
@@ -1677,7 +1677,7 @@ div.back-action a:hover span, #toc.toc2 div.back-action a:hover span {
     border-top: 3px solid #2c4ab5;
 }
 
-#header-spring h1 {
+#header-rudder h1 {
     margin: 0;
     padding: 0;
     font-size: 22px;
@@ -1686,11 +1686,11 @@ div.back-action a:hover span, #toc.toc2 div.back-action a:hover span {
     padding-left: .6rem
 }
 
-#header-spring h1 svg {
+#header-rudder h1 svg {
     width: 200px
 }
 
-body.book #header-spring {
+body.book #header-rudder {
     position: relative;
     top: auto;
     left: auto;
@@ -1708,7 +1708,7 @@ body.book #header, body.book #content, body.book #footnotes, body.book #footer {
     margin: 0 auto
 }
 
-body.toc2 #header-spring {
+body.toc2 #header-rudder {
     position: absolute;
     left: 0;
     right: 0;
@@ -1997,7 +1997,7 @@ body.toc2 #header {
         max-width: none
     }
 
-    body.book #header-spring h1 {
+    body.book #header-rudder h1 {
         max-width: 1400px;
         margin: 0 auto
     }
@@ -2144,7 +2144,7 @@ body.toc2 #header {
         max-width: 1400px
     }
 
-    body.toc2 #header-spring h1 {
+    body.toc2 #header-rudder h1 {
         margin: 0 auto;
         max-width: 1400px
     }
