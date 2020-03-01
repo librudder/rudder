@@ -17,14 +17,14 @@ public class ProxyTest {
     @Test
     public void interfaceTest() throws Throwable {
         final Long someNum = 8855L;
-        final var container = new ContaineredApplication<>("Itachi", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", ProxyTestRudderProxyTestApp.class, List.of("" + someNum));
+        final var container = new ContaineredApplication<>("Itachi", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", ProxyTestRudderApp.class, List.of("" + someNum));
         container.stop();
         container.start();
 
-        final ProxyTestRudderProxyTestApp application = container.getApplication();
+        final ProxyTestRudderApp application = container.getApplication();
 
         // receiving interface implementation
-        final ProxyMeInterface obj = application.obj();
+        final ProxyTestInterface obj = application.obj();
 
         final Long resultOfMethodOfInterface = obj.callMyMethod();
 
@@ -36,7 +36,7 @@ public class ProxyTest {
 
         final Long localValue = 999L;
 
-        final Long localObjectTransferedToMethodResult = application.handleSomeInterface(new ProxyMeInterface() {
+        final Long localObjectTransferedToMethodResult = application.handleSomeInterface(new ProxyTestInterface() {
             @Override
             public Long callMyMethod() {
                 return localValue;
@@ -49,13 +49,13 @@ public class ProxyTest {
     }
 
 
-    interface ProxyMeInterface {
+    interface ProxyTestInterface {
 
         Long callMyMethod();
 
     }
 
-    static class ProxyTestApp {
+    private static class ProxyTestApp {
 
         private final Long num;
 
@@ -67,33 +67,33 @@ public class ProxyTest {
             this.num = Long.valueOf(num);
         }
 
-        ProxyMeInterface obj() {
-            final ProxyMeInterface obj = (ProxyMeInterface) Proxy.newProxyInstance(ProxyMeInterface.class.getClassLoader(),
-                    new Class[]{ProxyMeInterface.class}, (proxy, method, args) -> num);
+        ProxyTestInterface obj() {
+            final ProxyTestInterface obj = (ProxyTestInterface) Proxy.newProxyInstance(ProxyTestInterface.class.getClassLoader(),
+                    new Class[]{ProxyTestInterface.class}, (proxy, method, args) -> num);
             return obj;
         }
 
-        Long handleSomeInterface(final ProxyMeInterface proxyMeInterface) {
-            return proxyMeInterface.callMyMethod();
+        Long handleSomeInterface(final ProxyTestInterface proxyTestInterface) {
+            return proxyTestInterface.callMyMethod();
         }
 
     }
 
-    static class ProxyTestRudderProxyTestApp extends ProxyTestApp implements RudderApplication<ProxyTestApp> {
+    private static class ProxyTestRudderApp extends ProxyTestApp implements RudderApplication<ProxyTestApp> {
 
-        private static Consumer<ProxyTestRudderProxyTestApp> callback;
+        private static Consumer<ProxyTestRudderApp> callback;
 
-        public ProxyTestRudderProxyTestApp(final String num) {
+        public ProxyTestRudderApp(final String num) {
             super(num);
         }
 
-        public static void setReadyCallback(final Consumer<ProxyTestRudderProxyTestApp> callback) {
-            ProxyTestRudderProxyTestApp.callback = callback;
+        public static void setReadyCallback(final Consumer<ProxyTestRudderApp> callback) {
+            ProxyTestRudderApp.callback = callback;
         }
 
         public static void main(String[] args) {
             ProxyTestApp.main(args);
-            callback.accept(new ProxyTestRudderProxyTestApp(args[0]));
+            callback.accept(new ProxyTestRudderApp(args[0]));
         }
 
     }

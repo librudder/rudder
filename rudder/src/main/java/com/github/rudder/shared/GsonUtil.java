@@ -12,7 +12,6 @@ public class GsonUtil {
 		gson = new GsonBuilder()
 				.registerTypeAdapter(MethodArgument.class, (JsonDeserializer<MethodArgument>) (jsonElement, type, jsonDeserializationContext) -> {
 					final JsonObject asJsonObject = jsonElement.getAsJsonObject();
-					final JsonElement value = asJsonObject.get("value");
 
 					final JsonElement objectClassJsonElement = asJsonObject.get("objectClass");
 					final String objectClass = objectClassJsonElement != null ? objectClassJsonElement.getAsString() : null;
@@ -22,13 +21,13 @@ public class GsonUtil {
 					final JsonElement objectIdJsonElement = asJsonObject.get("objectId");
 					final String objectId = objectIdJsonElement != null ? objectIdJsonElement.getAsString() : null;
 
-					final String asString = value != null ? value.getAsString() : null;
+					final JsonElement value = asJsonObject.get("value");
 					final Object redValue;
-					if (asString == null) {
+					if (value == null) {
 						redValue = null;
 					} else {
 						try {
-							redValue = gson.fromJson(asString, Class.forName(objectClass));
+							redValue = gson.fromJson(value, Class.forName(objectClass));
 						} catch (ClassNotFoundException e) {
 							throw new RuntimeException(e);
 						}
@@ -42,7 +41,6 @@ public class GsonUtil {
 				})
 				.registerTypeAdapter(MethodCallResult.class, (JsonDeserializer<MethodCallResult>) (jsonElement, type, jsonDeserializationContext) -> {
 					final JsonObject asJsonObject = jsonElement.getAsJsonObject();
-					final JsonElement value = asJsonObject.get("result");
 
 					final JsonElement objectClassJsonElement = asJsonObject.get("objectClass");
 					final String objectClass = objectClassJsonElement != null ? objectClassJsonElement.getAsString() : null;
@@ -52,13 +50,14 @@ public class GsonUtil {
 					final JsonElement objectIdJsonElement = asJsonObject.get("objectId");
 					final String objectId = objectIdJsonElement != null ? objectIdJsonElement.getAsString() : null;
 
-					final String asString = value != null ? value.getAsString() : null;
+					final JsonElement value = asJsonObject.get("result");
+
 					final Object redValue;
-					if (asString == null) {
+					if (value == null) {
 						redValue = null;
 					} else {
 						try {
-							redValue = gson.fromJson(asString, Class.forName(objectClass));
+							redValue = gson.fromJson(value, Class.forName(objectClass));
 						} catch (ClassNotFoundException e) {
 							throw new RuntimeException(e);
 						}

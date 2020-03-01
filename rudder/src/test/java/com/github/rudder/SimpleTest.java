@@ -15,22 +15,24 @@ public class SimpleTest {
     @Test
     public void test() throws Exception {
         final String testValue = "Test Value";
-        final var container = new ContaineredApplication<>("Itachi", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", RudderApp.class, List.of(testValue));
+        final var container = new ContaineredApplication<>("Itachi", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", SimpleTestRudderApp.class, List.of(testValue));
         container.stop();
         container.start();
 
-        final RudderApp application = container.getApplication();
+        final SimpleTestRudderApp application = container.getApplication();
 
         final int number = application.getNumber("451");
         Assert.assertEquals(451, number);
 
-        Assert.assertEquals(testValue, application.getValue());
+        final String anotherValue = "Another Value";
+        final String expected = testValue + " " + anotherValue;
+        Assert.assertEquals(expected, application.getValue(anotherValue));
 
         container.stop();
     }
 
 
-    static class App {
+    private static class SimpleTestApp {
 
         private static String value;
 
@@ -42,23 +44,23 @@ public class SimpleTest {
             return Integer.parseInt(number);
         }
 
-        public String getValue() {
-            return value;
+        public String getValue(final String anotherValue) {
+            return value + " " + anotherValue;
         }
 
     }
 
-    static class RudderApp extends App implements RudderApplication<App> {
+    private static class SimpleTestRudderApp extends SimpleTestApp implements RudderApplication<SimpleTestApp> {
 
-        private static Consumer<RudderApp> callback;
+        private static Consumer<SimpleTestRudderApp> callback;
 
-        public static void setReadyCallback(final Consumer<RudderApp> callback) {
-            RudderApp.callback = callback;
+        public static void setReadyCallback(final Consumer<SimpleTestRudderApp> callback) {
+            SimpleTestRudderApp.callback = callback;
         }
 
         public static void main(String[] args) {
-            App.main(args);
-            callback.accept(new RudderApp());
+            SimpleTestApp.main(args);
+            callback.accept(new SimpleTestRudderApp());
         }
 
     }

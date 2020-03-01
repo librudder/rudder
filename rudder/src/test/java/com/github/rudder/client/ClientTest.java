@@ -15,14 +15,14 @@ public class ClientTest {
     @Test
     public void interfaceTest() throws Throwable {
         final Long someNum = 1337L;
-        final var container = new ContaineredApplication<>("Itachi", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", ClientTest.RudderApp.class, List.of("" + someNum));
+        final var container = new ContaineredApplication<>("Itachi", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", ClientTestRudderApp.class, List.of("" + someNum));
         container.stop();
         container.start();
 
-        final ClientTest.RudderApp application = container.getApplication();
+        final ClientTestRudderApp application = container.getApplication();
 
         // receiving interface implementation
-        final SomeInterface obj = application.obj();
+        final ClientTestInterface obj = application.obj();
 
         final Long resultOfMethodOfInterface = obj.callMyMethod();
 
@@ -34,7 +34,7 @@ public class ClientTest {
 
         final Long localValue = 322L;
 
-        final Long localObjectTransferedToMethodResult = application.handleSomeInterface(new SomeInterface() {
+        final Long localObjectTransferedToMethodResult = application.handleSomeInterface(new ClientTestInterface() {
             @Override
             public Long callMyMethod() {
                 return localValue;
@@ -47,13 +47,13 @@ public class ClientTest {
     }
 
 
-    interface SomeInterface {
+    interface ClientTestInterface {
 
         Long callMyMethod();
 
     }
 
-    static class App {
+    private static class ClientTestApp {
 
         private final Long num;
 
@@ -61,12 +61,12 @@ public class ClientTest {
 
         }
 
-        public App(final String num) {
+        public ClientTestApp(final String num) {
             this.num = Long.valueOf(num);
         }
 
-        SomeInterface obj() {
-            return new SomeInterface() {
+        ClientTestInterface obj() {
+            return new ClientTestInterface() {
                 @Override
                 public Long callMyMethod() {
                     return num;
@@ -74,27 +74,27 @@ public class ClientTest {
             };
         }
 
-        Long handleSomeInterface(final SomeInterface someInterface) {
-            return someInterface.callMyMethod();
+        Long handleSomeInterface(final ClientTestInterface clientTestInterface) {
+            return clientTestInterface.callMyMethod();
         }
 
     }
 
-    static class RudderApp extends ClientTest.App implements RudderApplication<ClientTest.App> {
+    private static class ClientTestRudderApp extends ClientTestApp implements RudderApplication<ClientTestApp> {
 
-        private static Consumer<ClientTest.RudderApp> callback;
+        private static Consumer<ClientTestRudderApp> callback;
 
-        public RudderApp(final String num) {
+        public ClientTestRudderApp(final String num) {
             super(num);
         }
 
-        public static void setReadyCallback(final Consumer<ClientTest.RudderApp> callback) {
-            ClientTest.RudderApp.callback = callback;
+        public static void setReadyCallback(final Consumer<ClientTestRudderApp> callback) {
+            ClientTestRudderApp.callback = callback;
         }
 
         public static void main(String[] args) {
-            ClientTest.App.main(args);
-            callback.accept(new ClientTest.RudderApp(args[0]));
+            ClientTestApp.main(args);
+            callback.accept(new ClientTestRudderApp(args[0]));
         }
 
     }

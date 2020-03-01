@@ -20,7 +20,7 @@ public class CoordinatorTest {
     public void basicTest() throws Throwable {
         final String foo = "foo";
         final String bar = "bar";
-        Coordinator.main(new String[]{RudderApp.class.getName(), foo, bar});
+        Coordinator.main(new String[]{CoordinatorTestRudderApp.class.getName(), foo, bar});
         final List<String> keys = new ArrayList<>(Coordinator.objectStorage.keySet());
 
         Assert.assertEquals(1, keys.size());
@@ -29,9 +29,9 @@ public class CoordinatorTest {
         final Object rudderAppObject = Coordinator.objectStorage.get(mainObjectKey);
 
         Assert.assertNotNull(rudderAppObject);
-        Assert.assertEquals(rudderAppObject.getClass(), RudderApp.class);
+        Assert.assertEquals(rudderAppObject.getClass(), CoordinatorTestRudderApp.class);
 
-        RudderApp rudderApp = (RudderApp) rudderAppObject;
+        CoordinatorTestRudderApp rudderApp = (CoordinatorTestRudderApp) rudderAppObject;
 
         Assert.assertEquals(foo, rudderApp.val1);
         Assert.assertEquals(bar, rudderApp.val2);
@@ -46,15 +46,15 @@ public class CoordinatorTest {
 
     @Test(expected = IllegalApplicationException.class)
     public void testNotRudderApplication() throws Throwable {
-        Coordinator.main(new String[]{App.class.getName(), "don't", "care"});
+        Coordinator.main(new String[]{CoordinatorTestApp.class.getName(), "don't", "care"});
         Assert.fail("This must fail as it's not a Rudder Application");
     }
 
-    private static class App {
+    private static class CoordinatorTestApp {
 
         String val1;
 
-        public App(final String val1) {
+        public CoordinatorTestApp(final String val1) {
             this.val1 = val1;
         }
 
@@ -63,23 +63,23 @@ public class CoordinatorTest {
 
     }
 
-    private static class RudderApp extends CoordinatorTest.App implements RudderApplication<CoordinatorTest.App> {
+    private static class CoordinatorTestRudderApp extends CoordinatorTestApp implements RudderApplication<CoordinatorTestApp> {
 
         String val2;
 
-        private static Consumer<CoordinatorTest.RudderApp> callback;
+        private static Consumer<CoordinatorTestRudderApp> callback;
 
-        public RudderApp(final String val1) {
+        public CoordinatorTestRudderApp(final String val1) {
             super(val1);
         }
 
-        public static void setReadyCallback(final Consumer<CoordinatorTest.RudderApp> callback) {
-            CoordinatorTest.RudderApp.callback = callback;
+        public static void setReadyCallback(final Consumer<CoordinatorTestRudderApp> callback) {
+            CoordinatorTestRudderApp.callback = callback;
         }
 
         public static void main(String[] args) {
-            CoordinatorTest.App.main(args);
-            final RudderApp t = new RudderApp(args[0]);
+            CoordinatorTestApp.main(args);
+            final CoordinatorTestRudderApp t = new CoordinatorTestRudderApp(args[0]);
             t.val2 = args[1];
             callback.accept(t);
         }
