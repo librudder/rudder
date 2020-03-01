@@ -1,0 +1,32 @@
+= rudder
+
+[.float-group]
+--
+image::https://img.shields.io/lgtm/grade/java/g/librudder/rudder.svg?logo=lgtm&logoWidth=18["Language grade: Java", link="https://lgtm.com/projects/g/librudder/rudder/context:java", float="left"]
+image::https://circleci.com/gh/librudder/rudder.svg?style=svg["CircleCI", link="https://circleci.com/gh/librudder/rudder", float="left"]
+[.left]
+image::https://codecov.io/gh/librudder/rudder/branch/master/graph/badge.svg["CodeCov", link="https://codecov.io/gh/librudder/rudder"]
+--
+
+
+include::_intro.adoc[]
+
+== Installation
+include::_installation.adoc[]
+
+== Usage
+
+include::_simple_example.adoc[]
+
+For more real life example check link:spring_example.html[Spring example].
+
+== Building
+Just run
+[source,sh,subs="attributes+"]
+----
+./mvnw clean install
+----
+in the root project directory
+
+== Contributing
+

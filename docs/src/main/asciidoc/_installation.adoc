@@ -1,0 +1,18 @@
+:numbered!:
+
+=== Maven
+Add this to your pom.xml:
+[source,xml,subs="attributes+"]
+----
+<dependency>
+    <groupId>com.github.librudder</groupId>
+    <artifactId>rudder</artifactId>
+    <version>{artifact-version}</version>
+</dependency>
+----
+=== Gradle
+Add this to your build.gradle:
+[source,groovy,subs="attributes+"]
+----
+implementation 'com.github.librudder:rudder:{artifact-version}'
+----

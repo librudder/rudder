@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <parent>
+        <artifactId>rudder-parent</artifactId>
+        <groupId>com.github.rudder</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>docs</artifactId>
+
+    <properties>
+        <docs.resources.dir>${project.build.directory}/build-docs</docs.resources.dir>
+        <main.basedir>${parent.basedir}</main.basedir>
+        <refdocs.build.directory>${project.build.directory}/refdocs/</refdocs.build.directory>
+        <antelopetasks.version>3.2.10</antelopetasks.version>
+        <ant-nodeps.version>1.8.1</ant-nodeps.version>
+        <jruby-complete.version>9.2.10.0</jruby-complete.version>
+        <asciidoctorj.version>2.2.0</asciidoctorj.version>
+        <maven-dependency-plugin-for-docs.phase>generate-resources</maven-dependency-plugin-for-docs.phase>
+        <ant-contrib.version>1.0b3</ant-contrib.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>ant-contrib</groupId>
+            <artifactId>ant-contrib</artifactId>
+            <version>${ant-contrib.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>ant</groupId>
+                    <artifactId>ant</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant-nodeps</artifactId>
+            <version>${ant-nodeps.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.tigris.antelope</groupId>
+            <artifactId>antelopetasks</artifactId>
+            <version>${antelopetasks.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jruby</groupId>
+            <artifactId>jruby-complete</artifactId>
+            <version>${jruby-complete.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.asciidoctor</groupId>
+            <artifactId>asciidoctorj</artifactId>
+            <version>${asciidoctorj.version}</version>
+        </dependency>
+    </dependencies>
+
+
+    <profiles>
+        <profile>
+            <id>docs</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>exec-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>pl.project13.maven</groupId>
+                        <artifactId>git-commit-id-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-asciidoc-resources</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/refdocs/</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>src/main/asciidoc</directory>
+                                            <excludes>
+                                                <exclude>ghpages.sh</exclude>
+                                            </excludes>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.asciidoctor</groupId>
+                        <artifactId>asciidoctor-maven-plugin</artifactId>
+                        <configuration>
+                            <sourceDirectory>src/main/asciidoc</sourceDirectory>
+                            <attributes>
+                                <endpoint-url>http://example.org</endpoint-url>
+                                <sourcedir>${project.build.sourceDirectory}</sourcedir>
+                                <project-version>${project.version}</project-version>
+                            </attributes>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>asciidoc-to-html</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>process-asciidoc</goal>
+                                </goals>
+                                <configuration>
+                                    <backend>html5</backend>
+                                    <sourceHighlighter>highlight.js</sourceHighlighter>
+                                    <sourceDirectory>${refdocs.build.directory}</sourceDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${refdocs.build.directory}</directory>
+                                            <excludes>
+                                                <exclude>**/*.*adoc</exclude>
+                                            </excludes>
+                                        </resource>
+                                    </resources>
+                                    <!--
+                                    Scenarios for linking vs embedding assets:
+                                    Link to both stylesheets and images::
+                                      - don't set embedAssets option
+                                      - set linkcss attribute to true
+                                      - set imagesdir attribute to path relative to AsciiDoc source file
+                                      <attributes>
+                                          <linkcss>true</linkcss>
+                                          <imagesdir>./images</imagesdir>
+                                      </attributes>
+                                    Embed stylesheets and images::
+
+                                      - set embedAssets option to true
+                                      - don't set linkcss attribute
+                                      - set imagesdir attribute to path relative to project root
+                                      <embedAssets>true</embedAssets>
+                                      <attributes>
+                                          <imagesdir>src/docs/asciidoc/images</imagesdir>
+                                      </attributes>
+                                    Link to stylesheets but embed images::
+
+                                      - set embedAssets option to true
+                                      - set linkcss attribute to true
+                                      - set imagesdir attribute to path relative to project root
+                                      <embedAssets>true</embedAssets>
+                                      <attributes>
+                                          <linkcss>true</linkcss>
+                                          <imagesdir>src/docs/asciidoc/images</imagesdir>
+                                      </attributes>
+                                    Embed stylesheets but link images (default)::
+
+                                      - don't set embedAssets option
+                                      - don't set linkcss attribute
+                                      - set imagesdir attribute to path relative to AsciiDoc source file
+                                      <attributes>
+                                          <imagesdir>./images</imagesdir>
+                                      </attributes>
+                                    IMPORTANT: When you enable image embedding, you must qualify the path the the imagesdir, as shown above.
+                                    -->
+                                    <attributes>
+                                        <imagesdir>./images</imagesdir>
+                                        <toc>left</toc>
+                                        <artifact-version>${project.version}</artifact-version>
+                                        <icons>font</icons>
+                                        <sectanchors>true</sectanchors>
+                                        <!-- set the idprefix to blank -->
+                                        <idprefix/>
+                                        <idseparator>-</idseparator>
+                                        <docinfo1>true</docinfo1>
+                                        <highlightjsdir>js/highlight</highlightjsdir>
+                                        <highlightjs-theme>atom-one-dark-reasonable</highlightjs-theme>
+                                        <linkcss>true</linkcss>
+                                        <nofooter>true</nofooter>
+                                        <imagesdir>./images</imagesdir>
+                                        <icons>font</icons>
+                                        <stylesdir>css/</stylesdir>
+                                        <stylesheet>rudder.css</stylesheet>
+                                        <attribute-missing>warn</attribute-missing>
+                                    </attributes>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-antrun-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.1.1</version>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>

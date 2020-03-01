@@ -10,7 +10,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class InvocationController implements Handler {
+public class InvocationController implements HttpApp.HandlerDefinition {
 
     private final ObjectStorage objects;
     private InvocationClient client;
@@ -78,30 +78,37 @@ public class InvocationController implements Handler {
         return args;
     }
 
-    @Override
-    public void handle(@NotNull final Context context) throws Exception {
-        try {
-            final String name = context.req.getParameter("methodName");
-            final String calleeObjectId = context.req.getParameter("objectId");
-
-            final Object obj = objects.get(calleeObjectId);
-
-            final String body = context.body();
-
-            Object[] args = new Object[0];
-
-            if (!TextUtils.isEmpty(body)) {
-                args = getArguments(body, objects);
-            }
-
-            MethodCallResult res = invokeMethod(name, obj, args, objects);
-            context.result(GsonUtil.gson.toJson(res));
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
     public void setClient(final InvocationClient client) {
         this.client = client;
+    }
+
+    @Override
+    public String path() {
+        return "/invoke";
+    }
+
+    @Override
+    public Handler handler() {
+        return context -> {
+            try {
+                final String name = context.req.getParameter("methodName");
+                final String calleeObjectId = context.req.getParameter("objectId");
+
+                final Object obj = objects.get(calleeObjectId);
+
+                final String body = context.body();
+
+                Object[] args = new Object[0];
+
+                if (!TextUtils.isEmpty(body)) {
+                    args = getArguments(body, objects);
+                }
+
+                MethodCallResult res = invokeMethod(name, obj, args, objects);
+                context.result(GsonUtil.gson.toJson(res));
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        };
     }
 }

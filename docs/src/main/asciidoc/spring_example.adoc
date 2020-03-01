@@ -1,0 +1,112 @@
+=== Example with Spring
+
+Create basic spring application:
+
+[source,java]
+----
+@SpringBootApplication
+public class SpringApp {
+
+    @Inject
+    private SomeEntityService service;
+
+    public static void main(String[] args){
+        SpringApplication.run(SpringApp.class);
+    }
+
+}
+----
+
+And a rudder integrator:
+[source,java]
+----
+public static class SpringRudderApp
+    extends SpringApp
+    implements ApplicationListener<ApplicationReadyEvent>,
+                RudderApplication<SpringApp> { // <1>
+
+    private static Consumer<SpringApp> callback;
+
+    public static void setReadyCallback(final Consumer<SpringApp> callback) {//<2>
+        SpringRudderApp.callback = callback;
+    }
+
+    @Override
+    public void onApplicationEvent(final ApplicationReadyEvent applicationReadyEvent) {
+        callback.accept(this); //<3>
+    }
+}
+----
+
+<1> Implement `RudderApplication<T>` with base class as a generic `T` parameter
+<2> Don't forget about `setReadyCallback` method, it's needed by rudder to start the app
+<3> Notice the application ready event listener.
+It notifies the rudder host (and, thus, rudder client) that application started and
+is ready for being worked with.
+
+Add an entity, a repository and a service:
+
+[source,java]
+----
+@Entity
+public class SomeEntity {
+    //...
+}
+
+@Repository
+public interface SomeEntityRepository extends JpaRepository<SomeEntity, Long> {
+    //...
+}
+
+@Service
+public class SomeEntityService {
+
+    private final SomeEntityRepository repo;
+
+}
+----
+
+Now we can start application:
+
+[source,java]
+----
+public class SpringSample {
+
+    public static void main(String[] args) throws Exception {
+        final var clazz = SpringRudderApp.class;
+        final var container = new ContaineredApplication<>("Sasuke", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", clazz, List.of());
+
+        container.start();
+
+        final SpringApp application = container.getApplication();
+
+        // we can get service
+        final SomeEntityService service = application.getService();
+
+        // and a repo
+        final SomeEntityRepository repo = service.getRepo();
+
+        // use them
+        final SomeEntity save = service.createSome("Test");
+
+        final Long id = save.getId();
+
+        // and inspect the result of usage
+        final SomeEntity some = service.findSomeEntityById(id);
+
+        System.out.println(some.getTitle());
+
+        final List<SomeEntity> all = repo.findAll();
+        final SomeEntity someEntity = all.get(0);
+
+        System.out.println(someEntity.getTitle());
+
+        container.stop();
+    }
+
+
+}
+
+----
+
+link:https://github.com/librudder/rudder/tree/master/rudder-sample/src/main/java/com/github/rudder/spring[Full sources of example]

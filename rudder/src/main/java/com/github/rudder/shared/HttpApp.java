@@ -22,8 +22,8 @@ public class HttpApp {
         this.port = 0;
     }
 
-    public void add(final String path, final Handler handler) {
-        this.handlers.add(new HandlerDefinition(path, handler));
+    public void add(final HandlerDefinition handlerDefinition) {
+        this.handlers.add(handlerDefinition);
     }
 
     public void start() {
@@ -31,7 +31,7 @@ public class HttpApp {
 
         this.port = this.app.port();
 
-        handlers.forEach(handlerDefinition -> app.post(handlerDefinition.getPath(), handlerDefinition.getHandler()));
+        handlers.forEach(handlerDefinition -> app.post(handlerDefinition.path(), handlerDefinition.handler()));
     }
 
     public int getPort() {
@@ -44,24 +44,12 @@ public class HttpApp {
         }
     }
 
-    public static class HandlerDefinition {
+    public interface HandlerDefinition {
 
-        private final String path;
+        String path();
 
-        private final Handler handler;
+        Handler handler();
 
-        public HandlerDefinition(final String path, final Handler handler) {
-            this.path = path;
-            this.handler = handler;
-        }
-
-        public String getPath() {
-            return path;
-        }
-
-        public Handler getHandler() {
-            return handler;
-        }
     }
 
 }

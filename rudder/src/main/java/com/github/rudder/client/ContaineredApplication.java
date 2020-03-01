@@ -32,31 +32,60 @@ import static com.github.rudder.host.Coordinator.COORDINATOR_CONTROL_PORT;
 
 public class ContaineredApplication<T> {
 
+    /**
+     * Name of the container holding application
+     */
     private final String containerName;
 
-    private final String container;
+    /**
+     * Name of the docker container image
+     */
+    private final String imageName;
 
+    /**
+     * Class to be run inside container
+     */
     private final Class<T> clazz;
 
+    /**
+     * Arguments to pass to application
+     */
     private final List<String> args;
 
+    /**
+     * Docker client
+     */
     private final DockerClient dockerClient;
 
+    /**
+     * Client ID
+     */
     private String containerId;
 
+    /**
+     * Running container info
+     */
     private InspectContainerResponse containerInfo;
 
+    /**
+     * HTTP application that is handling RPCs
+     */
     private HttpApp httpApp;
 
-    public ContaineredApplication(final String containerName, final String container, final Class<T> clazz, final List<String> args) {
+    public ContaineredApplication(final String containerName, final String imageName, final Class<T> clazz, final List<String> args) {
         this.containerName = containerName;
-        this.container = container;
+        this.imageName = imageName;
         this.clazz = clazz;
         this.args = args;
 
         this.dockerClient = DockerClientBuilder.getInstance().build();
     }
 
+    /**
+     * Start container with application
+     *
+     * @throws Exception
+     */
     public void start() throws Exception {
         final String osName = System.getProperty("os.name").toLowerCase();
         final String networkName;
@@ -72,7 +101,7 @@ public class ContaineredApplication<T> {
                 Spliterators.spliteratorUnknownSize(docker0.getInetAddresses().asIterator(), Spliterator.ORDERED),
                 false
         ).filter(addr -> addr instanceof Inet4Address).findFirst()
-                .map(addr -> new String[]{"jainer.host:" + addr.getHostAddress()})
+                .map(addr -> new String[]{"rudder.host:" + addr.getHostAddress()})
                 .orElse(new String[0]);
 
         List<URI> classpath = new ClassGraph().getClasspathURIs();
@@ -113,7 +142,7 @@ public class ContaineredApplication<T> {
         cmd.addAll(args);
 
         final CountDownLatch latch = new CountDownLatch(1);
-        dockerClient.pullImageCmd(container).exec(new ResultCallback<>() {
+        dockerClient.pullImageCmd(imageName).exec(new ResultCallback<>() {
             @Override
             public void onStart(final Closeable closeable) {
 
@@ -143,7 +172,7 @@ public class ContaineredApplication<T> {
         latch.await(10, TimeUnit.MINUTES);
 
         CreateContainerResponse createdContainer = dockerClient
-                .createContainerCmd(container)
+                .createContainerCmd(imageName)
                 .withEnv()
                 .withPublishAllPorts(true)
                 .withCmd(cmd)
@@ -159,6 +188,9 @@ public class ContaineredApplication<T> {
         this.containerInfo = this.dockerClient.inspectContainerCmd(this.containerId).exec();
     }
 
+    /**
+     * Stop container and HTTP RPC app
+     */
     public void stop() {
         try {
             dockerClient.stopContainerCmd(containerName).exec();
@@ -175,6 +207,12 @@ public class ContaineredApplication<T> {
         }
     }
 
+    /**
+     * Get application object connected to application inside container
+     *
+     * @return application object
+     * @throws Exception
+     */
     public T getApplication() throws Exception {
         Retrofit retrofit = createRetrofit("localhost", getExposedPort(COORDINATOR_CONTROL_PORT));
 
@@ -182,7 +220,7 @@ public class ContaineredApplication<T> {
 
         final ObjectStorage objectStorage = new ObjectStorage();
         this.httpApp = new HttpApp();
-        httpApp.add("/invoke", new InvocationController(objectStorage, coordinatorClient));
+        httpApp.add(new InvocationController(objectStorage, coordinatorClient));
         httpApp.start();
 
 
@@ -199,31 +237,12 @@ public class ContaineredApplication<T> {
         return createProxy(coordinatorClient, objectStorage, uid, clazz);
     }
 
-
-    public T getApplicationTest() throws Exception {
-        Retrofit retrofit = createRetrofit("localhost", COORDINATOR_CONTROL_PORT);
-
-        final CoordinatorClient coordinatorClient = retrofit.create(CoordinatorClient.class);
-
-        final ObjectStorage objectStorage = new ObjectStorage();
-        this.httpApp = new HttpApp();
-        httpApp.add("/invoke", new InvocationController(objectStorage, coordinatorClient));
-        httpApp.start();
-
-
-        String uid = null;
-        while (TextUtils.isEmpty(uid)) {
-            try {
-                uid = coordinatorClient.hello(httpApp.getPort()).execute().body();
-            } catch (IOException e) {
-                // just wait a little bit more
-                // TODO: add timeout
-                Thread.sleep(200);
-            }
-        }
-        return createProxy(coordinatorClient, objectStorage, uid, clazz);
-    }
-
+    /**
+     * Get mapped port of container
+     *
+     * @param originalPort port inside container
+     * @return port outside container
+     */
     public Integer getExposedPort(final int originalPort) {
         Ports.Binding[] binding = new Ports.Binding[0];
         if (containerInfo != null) {

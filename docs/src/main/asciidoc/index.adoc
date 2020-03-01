@@ -1,0 +1,18 @@
+:source-highlighter: highlightjs
+include::_attributes.adoc[]
+= *{project-full-name}*
+
+include::_intro.adoc[]
+
+== Installation
+
+include::_installation.adoc[]
+
+:numbered:
+== Usage
+
+include::_simple_example.adoc[]
+
+For more real life example check link:spring_example.html[Spring example].
+
+
