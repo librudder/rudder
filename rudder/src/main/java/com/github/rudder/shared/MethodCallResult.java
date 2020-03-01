@@ -12,25 +12,11 @@ public class MethodCallResult {
 
 	private boolean isVoid;
 
-	public MethodCallResult(final boolean isVoid) {
-		this.isVoid = isVoid;
-		this.objectClass = null;
-		this.objectId = null;
-		this.isPrimitive = false;
+	public MethodCallResult() {
 	}
 
-	public MethodCallResult(final Object result) {
-		this.result = result;
-		this.objectId = null;
-		this.objectClass = null;
-		this.isPrimitive = true;
-	}
-
-	public MethodCallResult(final String objectId, final String objectClass) {
-		this.objectId = objectId;
-		this.objectClass = objectClass;
-		this.result = null;
-		this.isPrimitive = false;
+	public void setVoid(final boolean aVoid) {
+		isVoid = aVoid;
 	}
 
 	public boolean isPrimitive() {

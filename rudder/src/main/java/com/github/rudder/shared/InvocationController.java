@@ -1,7 +1,6 @@
 package com.github.rudder.shared;
 
 import com.github.rudder.client.Runner;
-import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.apache.http.util.TextUtils;
 import org.jetbrains.annotations.NotNull;
@@ -38,16 +37,24 @@ public class InvocationController implements HttpApp.HandlerDefinition {
         final Object result = declaredMethod.invoke(obj, args);
 
         if (isVoid) {
-            return new MethodCallResult(true);
+            final MethodCallResult methodCallResult = new MethodCallResult();
+            methodCallResult.setVoid(true);
+            return methodCallResult;
         }
 
         MethodCallResult res;
         if (Config.isPrimitive(result)) {
-            res = new MethodCallResult(result);
+            res = new MethodCallResult();
+            res.setObjectClass(result.getClass().getName());
+            res.setResult(result);
+            res.setPrimitive(true);
         } else {
             final String objectId = objects.put(result);
 
-            res = new MethodCallResult(objectId, result.getClass().getName());
+            res = new MethodCallResult();
+            res.setObjectClass(result.getClass().getName());
+            res.setObjectId(objectId);
+            res.setPrimitive(false);
         }
         return res;
     }

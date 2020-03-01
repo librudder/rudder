@@ -1,9 +1,7 @@
 package com.github.rudder.host;
 
 import com.github.rudder.shared.HttpApp;
-import io.javalin.http.Context;
 import io.javalin.http.Handler;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
 
