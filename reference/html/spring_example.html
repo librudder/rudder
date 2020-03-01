@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.8">
+<title>Example with Spring</title>
+<link rel="stylesheet" href="css/rudder.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel2">
+<li><a href="#example-with-spring">Example with Spring</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div class="sect2">
+<h3 id="example-with-spring"><a class="anchor" href="#example-with-spring"></a>Example with Spring</h3>
+<div class="paragraph">
+<p>Create basic spring application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@SpringBootApplication
+public class SpringApp {
+
+    @Inject
+    private SomeEntityService service;
+
+    public static void main(String[] args){
+        SpringApplication.run(SpringApp.class);
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And a rudder integrator:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public static class SpringRudderApp
+    extends SpringApp
+    implements ApplicationListener&lt;ApplicationReadyEvent&gt;,
+                RudderApplication&lt;SpringApp&gt; { <i class="conum" data-value="1"></i><b>(1)</b>
+
+    private static Consumer&lt;SpringApp&gt; callback;
+
+    public static void setReadyCallback(final Consumer&lt;SpringApp&gt; callback) {<i class="conum" data-value="2"></i><b>(2)</b>
+        SpringRudderApp.callback = callback;
+    }
+
+    @Override
+    public void onApplicationEvent(final ApplicationReadyEvent applicationReadyEvent) {
+        callback.accept(this); <i class="conum" data-value="3"></i><b>(3)</b>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Implement <code>RudderApplication&lt;T&gt;</code> with base class as a generic <code>T</code> parameter</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Don&#8217;t forget about <code>setReadyCallback</code> method, it&#8217;s needed by rudder to start the app</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Notice the application ready event listener.
+It notifies the rudder host (and, thus, rudder client) that application started and
+is ready for being worked with.</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Add an entity, a repository and a service:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">@Entity
+public class SomeEntity {
+    //...
+}
+
+@Repository
+public interface SomeEntityRepository extends JpaRepository&lt;SomeEntity, Long&gt; {
+    //...
+}
+
+@Service
+public class SomeEntityService {
+
+    private final SomeEntityRepository repo;
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Now we can start application:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">public class SpringSample {
+
+    public static void main(String[] args) throws Exception {
+        final var clazz = SpringRudderApp.class;
+        final var container = new ContaineredApplication&lt;&gt;("Sasuke", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", clazz, List.of());
+
+        container.start();
+
+        final SpringApp application = container.getApplication();
+
+        // we can get service
+        final SomeEntityService service = application.getService();
+
+        // and a repo
+        final SomeEntityRepository repo = service.getRepo();
+
+        // use them
+        final SomeEntity save = service.createSome("Test");
+
+        final Long id = save.getId();
+
+        // and inspect the result of usage
+        final SomeEntity some = service.findSomeEntityById(id);
+
+        System.out.println(some.getTitle());
+
+        final List&lt;SomeEntity&gt; all = repo.findAll();
+        final SomeEntity someEntity = all.get(0);
+
+        System.out.println(someEntity.getTitle());
+
+        container.stop();
+    }
+
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/librudder/rudder/tree/master/rudder-sample/src/main/java/com/github/rudder/spring">Full sources of example</a></p>
+</div>
+</div>
+</div>
+<script src="js/tocbot.min.js"></script>
+<script src="js/toc.js"></script>
+<link rel="stylesheet" href="js/highlight/styles/atom-one-dark-reasonable.min.css">
+<script src="js/highlight/highlight.min.js"></script>
+<script>hljs.initHighlighting()</script>
+</body>
+</html>

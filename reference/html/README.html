@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.8">
+<title>rudder</title>
+<link rel="stylesheet" href="css/rudder.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>rudder</h1>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#installation">Installation</a>
+<ul class="sectlevel2">
+<li><a href="#maven">Maven</a></li>
+<li><a href="#gradle">Gradle</a></li>
+</ul>
+</li>
+<li><a href="#usage">Usage</a></li>
+<li><a href="#building">Building</a></li>
+<li><a href="#contributing">Contributing</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="openblock float-group">
+<div class="content">
+<div class="imageblock left">
+<div class="content">
+<a class="image" href="https://lgtm.com/projects/g/librudder/rudder/context:java"><img src="https://img.shields.io/lgtm/grade/java/g/librudder/rudder.svg?logo=lgtm&logoWidth=18" alt="Language grade: Java"></a>
+</div>
+</div>
+<div class="imageblock left">
+<div class="content">
+<a class="image" href="https://circleci.com/gh/librudder/rudder"><img src="https://circleci.com/gh/librudder/rudder.svg?style=svg" alt="CircleCI"></a>
+</div>
+</div>
+<div class="imageblock left">
+<div class="content">
+<a class="image" href="https://codecov.io/gh/librudder/rudder"><img src="https://codecov.io/gh/librudder/rudder/branch/master/graph/badge.svg" alt="CodeCov"></a>
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>This project provides ability to run pieces of Java code inside 🐳Docker
+container and access objects like they&#8217;re outside.</p>
+</div>
+<div class="paragraph">
+<p>This creates infinite possibilities for integration testing.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="installation"><a class="anchor" href="#installation"></a>Installation</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="maven"><a class="anchor" href="#maven"></a>Maven</h3>
+<div class="paragraph">
+<p>Add this to your pom.xml:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-xml hljs" data-lang="xml">&lt;dependency&gt;
+    &lt;groupId&gt;com.github.librudder&lt;/groupId&gt;
+    &lt;artifactId&gt;rudder&lt;/artifactId&gt;
+    &lt;version&gt;1.0-SNAPSHOT&lt;/version&gt;
+&lt;/dependency&gt;</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="gradle"><a class="anchor" href="#gradle"></a>Gradle</h3>
+<div class="paragraph">
+<p>Add this to your build.gradle:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-groovy hljs" data-lang="groovy">implementation 'com.github.librudder:rudder:1.0-SNAPSHOT'</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Inherit from application you want to test. This application must have
+<code>public static void main</code> method and must implement
+<code>RudderApplication&lt;T&gt;</code> where T is application class. Also
+there must be a static <code>setReadyCallback(Consumer&lt;T&gt;)</code></p>
+</div>
+<div class="paragraph">
+<p>Example class to test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">import java.util.function.Consumer;
+class TestApplication {
+
+    public static void main(String[] args){
+
+    }
+
+    public String getCurrentHostname() {
+        return System.getenv("HOSTNAME");
+    }
+
+}
+
+class TestRudderApplication implements RudderApplication&lt;TestRudderApplication&gt; {
+
+    private static Consumer&lt;TestRudderApplication&gt; callback;
+
+    public static void setReadyCallback(final Consumer&lt;TestRudderApplication&gt; callback) {
+        TestRudderApplication.callback = callback;
+    }
+
+    public static void main(String[] args){
+        TestApplication.main(args);
+        callback.apply(new TestRudderApplicatiion());
+    }
+
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And our test starter:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-java hljs" data-lang="java">class Tester {
+    public static void main(String[] args){
+        Class&lt;?&gt; clazz = TestApplication.class;
+        ContaineredApplication&lt;TestApplication&gt; container = new ContaineredApplication&lt;&gt;("SomeName", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", clazz, List.of("raz", "dva"));
+        container.start();
+
+        final TestApplication application = container.getApplication();
+        System.out.println(application.getCurrentHostname());
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This example will print the <code>HOSTNAME</code> environment variable defined inside the container (usually it&#8217;s container ID).</p>
+</div>
+<div class="paragraph">
+<p>For more real life example check <a href="spring_example.html">Spring example</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="building"><a class="anchor" href="#building"></a>Building</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Just run</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-sh hljs" data-lang="sh">./mvnw clean install</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>in the root project directory</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="contributing"><a class="anchor" href="#contributing"></a>Contributing</h2>
+<div class="sectionbody">
+
+</div>
+</div>
+</div>
+<script src="js/tocbot.min.js"></script>
+<script src="js/toc.js"></script>
+<link rel="stylesheet" href="js/highlight/styles/atom-one-dark-reasonable.min.css">
+<script src="js/highlight/highlight.min.js"></script>
+<script>hljs.initHighlighting()</script>
+</body>
+</html>
