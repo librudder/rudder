@@ -219,9 +219,6 @@ function commit_changes_if_applicable() {
         # the gh-pages branch whenever you commit to master locally.
         # This is a little extreme. Use with care!
         ###################################################################
-        if [[ "${COMMIT_SUCCESSFUL}" == "yes" ]] ; then
-            git push origin gh-pages
-        fi
     fi
 }
 
