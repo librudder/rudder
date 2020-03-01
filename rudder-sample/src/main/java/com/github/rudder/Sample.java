@@ -16,21 +16,21 @@ public class Sample {
 
         final TestApplication application = container.getApplication();
 
-        final TestApplication.Pupa pupa = application.getPupa();
+        final TestApplication.ClassOne classOne = application.getClassOneObject();
 
-        final String exec = pupa.exec();
+        final String exec = classOne.exec();
         System.out.println(exec);
 
-        final TestApplication.Lupa lupa = pupa.methodWithPrimitive();
+        final TestApplication.ClassTwo classTwo = classOne.methodWithPrimitive();
 
-        final String foobar = lupa.foobar("ppx");
+        final String foobar = classTwo.foobar("ppx");
 
         System.out.println(foobar);
-        System.out.println(lupa.isSamePupa(pupa));
-        final File someFile = lupa.getSomeFile("/Users/danilov/");
+        System.out.println(classTwo.isSamePupa(classOne));
+        final File someFile = classTwo.getSomeFile("/Users/danilov/");
         System.out.println(someFile.getName());
 
-        lupa.setHoller(new Function<String, String>() {
+        classTwo.setSomeFunc(new Function<String, String>() {
             @Override
             public String apply(final String s) {
                 System.out.println("called back");
@@ -38,9 +38,9 @@ public class Sample {
             }
         });
 
-        lupa.call("who dis?");
+        classTwo.call("who dis?");
 
-        System.out.println(lupa.getValue());
+        System.out.println(classTwo.getValue());
 
         container.stop();
     }

@@ -1,9 +1,6 @@
 package com.github.rudder;
 
-import com.github.rudder.RudderApplication;
-
 import java.io.File;
-import java.util.Arrays;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -15,65 +12,63 @@ public class TestApplication implements RudderApplication<TestApplication> {
         TestApplication.callback = callback;
     }
 
-    public static void main(String[] args) throws InterruptedException {
-        System.out.println(Arrays.toString(args));
+    public static void main(String[] args) {
         TestApplication.callback.accept(new TestApplication());
-        System.out.println("This is Major Tom to Ground Control!");
     }
 
     public TestApplication() {
 
     }
 
-    public Pupa getPupa() {
-        return new Pupa();
+    public ClassOne getClassOneObject() {
+        return new ClassOne();
     }
 
-    public static class Pupa {
+    public static class ClassOne {
 
         public String exec() {
             return "I'm floating in the most peculiar way";
         }
 
-        public Lupa methodWithPrimitive() {
-            return new Lupa(this, "damn");
+        public ClassTwo methodWithPrimitive() {
+            return new ClassTwo(this, "damn");
         }
 
     }
 
-    public static class Lupa {
+    public static class ClassTwo {
 
-        private final String zipper;
+        private final String someValue;
 
-        private final Pupa pupa;
+        private final ClassOne classOne;
 
-        private Function<String, String> holler;
+        private Function<String, String> someFunc;
 
         private String value;
 
-        public Lupa(final Pupa pupa, final String zipper) {
-            this.zipper = zipper;
-            this.pupa = pupa;
+        public ClassTwo(final ClassOne classOne, final String someValue) {
+            this.someValue = someValue;
+            this.classOne = classOne;
         }
 
-        public boolean isSamePupa(final Pupa pupa) {
-            return this.pupa == pupa;
+        public boolean isSamePupa(final ClassOne classOne) {
+            return this.classOne == classOne;
         }
 
         public File getSomeFile(final String path) {
             return new File(path);
         }
 
-        public String foobar(final String jeppa) {
-            return jeppa + " Ooooh " + zipper;
+        public String foobar(final String foobarValue) {
+            return foobarValue + " Ooooh " + someValue;
         }
 
-        public void setHoller(final Function<String, String> holler) {
-            this.holler = holler;
+        public void setSomeFunc(final Function<String, String> someFunc) {
+            this.someFunc = someFunc;
         }
 
-        public void call(final String holla) {
-            this.value = this.holler.apply(holla);
+        public void call(final String callParameter) {
+            this.value = this.someFunc.apply(callParameter);
         }
 
         public String getValue() {

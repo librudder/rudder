@@ -1,6 +1,7 @@
 package com.github.rudder.shared;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -17,6 +18,10 @@ public class ObjectStorage {
         final String key = uuid.toString();
         objects.put(key, value);
         return key;
+    }
+
+    public Set<String> keySet() {
+        return objects.keySet();
     }
 
 }
