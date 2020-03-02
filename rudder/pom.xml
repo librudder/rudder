@@ -9,6 +9,12 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <properties>
+        <sonar.organization>librudder</sonar.organization>
+        <sonar.projectKey>librudder_rudder</sonar.projectKey>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    </properties>
+
     <artifactId>rudder</artifactId>
 
     <dependencies>

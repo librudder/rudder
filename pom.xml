@@ -37,8 +37,6 @@
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
 
-        <sonar.organization>librudder</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencyManagement>
