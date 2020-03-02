@@ -36,6 +36,10 @@
         <git-commit-id-plugin.version>4.0.0</git-commit-id-plugin.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+
+        <sonar.projectKey>librudder_rudder</sonar.projectKey>
+        <sonar.organization>librudder</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
     </properties>
 
     <dependencyManagement>

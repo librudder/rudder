@@ -39,3 +39,12 @@ jobs:
       # run tests!
       - run: ./mvnw clean install
       - run: bash <(curl -s https://codecov.io/bash)
+      - run:
+          name: Analyze on SonarCloud
+          command: mvn verify sonar:sonar
+
+workflows:
+  main:
+    jobs:
+      - build:
+          context: SonarCloud
