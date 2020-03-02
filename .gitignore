@@ -15,6 +15,9 @@
 
 # Generated files
 .idea/**/contentModel.xml
+./idea/thriftCompiler.xml
+./idea/$CACHE_FILE$
+
 
 # Sensitive or high-churn files
 .idea/**/dataSources/
