@@ -5,7 +5,7 @@
     <groupId>com.github.librudder</groupId>
     <artifactId>rudder-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0</version>
+    <version>1.1-SNAPSHOT</version>
     <modules>
         <module>rudder</module>
         <module>rudder-sample</module>
@@ -44,7 +44,7 @@
         <developerConnection>
             scm:git:ssh://git@github.com/librudder/rudder.git
         </developerConnection>
-      <tag>v1.0</tag>
+      <tag>HEAD</tag>
   </scm>
 
     <dependencyManagement>
