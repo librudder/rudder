@@ -38,14 +38,11 @@
     </properties>
 
     <scm>
-        <url>https://github.com/librudder/rudder</url>
-        <connection>scm:git:git://github.com/librudder/rudder.git
-        </connection>
-        <developerConnection>
-            scm:git:ssh://git@github.com/librudder/rudder.git
-        </developerConnection>
-      <tag>HEAD</tag>
-  </scm>
+        <connection>scm:git:git@github.com:librudder/rudder</connection>
+        <url>scm:git:git@github.com:librudder/rudder</url>
+        <developerConnection>scm:git:git@github.com:librudder/rudder</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <dependencyManagement>
         <dependencies>
