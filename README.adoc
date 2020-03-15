@@ -18,8 +18,6 @@ image::https://codecov.io/gh/librudder/rudder/branch/master/graph/badge.svg["Cod
 This project provides ability to run pieces of Java code inside 🐳Docker
 container and access objects like they're outside.
 
-This creates infinite possibilities for integration testing.
-
 == Installation
 :numbered!:
 
