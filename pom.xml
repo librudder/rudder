@@ -39,6 +39,15 @@
         <jsr305.version>3.0.2</jsr305.version>
     </properties>
 
+    <scm>
+        <url>https://github.com/librudder/rudder</url>
+        <connection>scm:git:git://github.com/librudder/rudder.git
+        </connection>
+        <developerConnection>
+            scm:git:ssh://git@github.com/librudder/rudder.git
+        </developerConnection>
+    </scm>
+
     <dependencyManagement>
         <dependencies>
 
@@ -192,6 +201,16 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.8.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                    <configuration>
+                        <tagNameFormat>v@{project.version}</tagNameFormat>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <releaseProfiles>releases</releaseProfiles>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
