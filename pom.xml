@@ -7,7 +7,7 @@
     <groupId>com.github.librudder</groupId>
     <artifactId>rudder-parent</artifactId>
     <packaging>pom</packaging>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1-SNAPSHOT</version>
     <modules>
         <module>rudder</module>
         <module>rudder-sample</module>
@@ -38,6 +38,13 @@
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <jsr305.version>3.0.2</jsr305.version>
     </properties>
+
+    <scm>
+        <connection>scm:git:git@github.com:librudder/rudder</connection>
+        <url>scm:git:git@github.com:librudder/rudder</url>
+        <developerConnection>scm:git:git@github.com:librudder/rudder</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
 
     <dependencyManagement>
         <dependencies>
@@ -192,6 +199,16 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-deploy-plugin</artifactId>
                     <version>2.8.2</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.5.3</version>
+                    <configuration>
+                        <tagNameFormat>v@{project.version}</tagNameFormat>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <releaseProfiles>releases</releaseProfiles>
+                    </configuration>
                 </plugin>
             </plugins>
         </pluginManagement>
