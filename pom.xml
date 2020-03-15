@@ -225,6 +225,16 @@
                 </repository>
             </distributionManagement>
         </profile>
+        <profile>
+            <id>oss-sonatype</id>
+            <distributionManagement>
+                <repository>
+                    <id>oss-sonatype-release</id>
+                    <name>OSS Sonatype Nexus</name>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>
+                </repository>
+            </distributionManagement>
+        </profile>
     </profiles>
 
 </project>
