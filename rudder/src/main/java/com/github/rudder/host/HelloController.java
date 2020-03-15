@@ -1,6 +1,6 @@
 package com.github.rudder.host;
 
-import com.github.rudder.shared.HttpApp;
+import com.github.rudder.shared.http.HttpApp;
 import io.javalin.http.Handler;
 
 import java.util.function.Consumer;

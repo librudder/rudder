@@ -3,7 +3,7 @@ package com.github.rudder.shared;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Config {
+public class RudderConfig {
 
     /**
      * All primitive object classes

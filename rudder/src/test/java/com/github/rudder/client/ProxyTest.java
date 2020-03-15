@@ -17,7 +17,7 @@ public class ProxyTest {
     @Test
     public void interfaceTest() throws Throwable {
         final Long someNum = 8855L;
-        final var container = new ContaineredApplication<>("Itachi", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", ProxyTestRudderApp.class, List.of("" + someNum));
+        final var container = new ContaineredApplication<>("adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", ProxyTestRudderApp.class, List.of("" + someNum));
 
         container.start();
 

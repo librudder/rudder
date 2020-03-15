@@ -1,4 +1,4 @@
-package com.github.rudder.shared;
+package com.github.rudder.shared.http.api;
 
 public class MethodCallResult {
 

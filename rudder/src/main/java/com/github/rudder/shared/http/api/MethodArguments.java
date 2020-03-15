@@ -1,4 +1,4 @@
-package com.github.rudder.shared;
+package com.github.rudder.shared.http.api;
 
 import java.util.ArrayList;
 import java.util.List;

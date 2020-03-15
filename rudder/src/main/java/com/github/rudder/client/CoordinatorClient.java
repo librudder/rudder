@@ -1,7 +1,7 @@
 package com.github.rudder.client;
 
 
-import com.github.rudder.shared.InvocationClient;
+import com.github.rudder.shared.http.InvocationClient;
 import retrofit2.Call;
 import retrofit2.http.POST;
 import retrofit2.http.Query;

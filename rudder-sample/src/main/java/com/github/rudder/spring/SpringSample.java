@@ -8,7 +8,7 @@ public class SpringSample {
 
     public static void main(String[] args) throws Exception {
         final var clazz = SpringApp.SpringRudderApp.class;
-        final var container = new ContaineredApplication<>("Sasuke", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", clazz, List.of());
+        final var container = new ContaineredApplication<>("adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", clazz, List.of());
 
         container.start();
 

@@ -15,7 +15,7 @@ public class SimpleTest {
     @Test
     public void test() throws Exception {
         final String testValue = "Test Value";
-        final var container = new ContaineredApplication<>("Itachi", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", SimpleTestRudderApp.class, List.of(testValue));
+        final var container = new ContaineredApplication<>("adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", SimpleTestRudderApp.class, List.of(testValue));
 
         container.start();
 

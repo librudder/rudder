@@ -4,6 +4,9 @@ import com.github.rudder.RudderApplication;
 import com.github.rudder.client.ContaineredApplication;
 import com.github.rudder.client.Runner;
 import com.github.rudder.shared.*;
+import com.github.rudder.shared.http.HttpApp;
+import com.github.rudder.shared.http.InvocationClient;
+import com.github.rudder.shared.http.InvocationController;
 import retrofit2.Retrofit;
 
 import java.lang.reflect.Method;
@@ -11,8 +14,6 @@ import java.util.Arrays;
 import java.util.function.Consumer;
 
 public class Coordinator {
-
-    public static final int COORDINATOR_CONTROL_PORT = 9513;
 
     static ObjectStorage objectStorage = new ObjectStorage();
 
@@ -30,7 +31,7 @@ public class Coordinator {
         setReadyCallback.invoke(null, (Consumer<Object>) o -> {
             final String mainObjectId = objectStorage.put(o);
 
-            final HttpApp httpApp = new HttpApp(COORDINATOR_CONTROL_PORT);
+            final HttpApp httpApp = new HttpApp(HttpApp.COORDINATOR_CONTROL_PORT);
 
             final InvocationController invocationController = new InvocationController(objectStorage);
             httpApp.add(new HelloController(mainObjectId, port -> {

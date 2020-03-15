@@ -1,6 +1,10 @@
-package com.github.rudder.shared;
+package com.github.rudder.shared.http;
 
 import com.github.rudder.client.Runner;
+import com.github.rudder.shared.*;
+import com.github.rudder.shared.gson.GsonUtil;
+import com.github.rudder.shared.http.api.MethodArguments;
+import com.github.rudder.shared.http.api.MethodCallResult;
 import io.javalin.http.Handler;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +46,7 @@ public class InvocationController implements HttpApp.HandlerDefinition {
         }
 
         MethodCallResult res;
-        if (Config.isPrimitive(result)) {
+        if (RudderConfig.isPrimitive(result)) {
             res = new MethodCallResult();
             res.setObjectClass(result.getClass().getName());
             res.setResult(result);

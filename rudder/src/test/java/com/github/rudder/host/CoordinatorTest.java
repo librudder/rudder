@@ -3,6 +3,7 @@ package com.github.rudder.host;
 import com.github.rudder.RudderApplication;
 import com.github.rudder.client.CoordinatorClient;
 import com.github.rudder.client.Runner;
+import com.github.rudder.shared.http.HttpApp;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +37,7 @@ public class CoordinatorTest {
         Assert.assertEquals(foo, rudderApp.val1);
         Assert.assertEquals(bar, rudderApp.val2);
 
-        final Retrofit retrofit = Runner.createRetrofit("localhost", Coordinator.COORDINATOR_CONTROL_PORT);
+        final Retrofit retrofit = Runner.createRetrofit("localhost", HttpApp.COORDINATOR_CONTROL_PORT);
         final CoordinatorClient coordinatorClient = retrofit.create(CoordinatorClient.class);
 
         final String objectIdReceivedByHTTP = coordinatorClient.hello(10_000).execute().body();

@@ -36,6 +36,7 @@
         <git-commit-id-plugin.version>4.0.0</git-commit-id-plugin.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
+        <jsr305.version>3.0.2</jsr305.version>
     </properties>
 
     <dependencyManagement>
@@ -132,6 +133,11 @@
                 <groupId>org.testcontainers</groupId>
                 <artifactId>testcontainers</artifactId>
                 <version>${testcontainers.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.findbugs</groupId>
+                <artifactId>jsr305</artifactId>
+                <version>${jsr305.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

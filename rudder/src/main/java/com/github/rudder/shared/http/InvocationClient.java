@@ -1,5 +1,7 @@
-package com.github.rudder.shared;
+package com.github.rudder.shared.http;
 
+import com.github.rudder.shared.http.api.MethodArguments;
+import com.github.rudder.shared.http.api.MethodCallResult;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;

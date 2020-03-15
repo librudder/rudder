@@ -10,7 +10,7 @@ public class Sample {
 
     public static void main(String[] args) throws Exception {
         final Class<TestApplication> testApplicationClass = TestApplication.class;
-        final ContaineredApplication<TestApplication> container = new ContaineredApplication<>("Sasuke", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", testApplicationClass, List.of("raz", "dva"));
+        final ContaineredApplication<TestApplication> container = new ContaineredApplication<>("adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", testApplicationClass, List.of("raz", "dva"));
         container.stop();
         container.start();
 

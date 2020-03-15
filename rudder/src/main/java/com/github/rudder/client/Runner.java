@@ -1,6 +1,10 @@
 package com.github.rudder.client;
 
 import com.github.rudder.shared.*;
+import com.github.rudder.shared.gson.GsonUtil;
+import com.github.rudder.shared.http.InvocationClient;
+import com.github.rudder.shared.http.api.MethodArguments;
+import com.github.rudder.shared.http.api.MethodCallResult;
 import net.sf.cglib.proxy.*;
 import okhttp3.OkHttpClient;
 import org.objenesis.ObjenesisStd;
@@ -69,7 +73,7 @@ public class Runner {
                     if (arguments.length > 0) {
                         final MethodArguments methodArguments = new MethodArguments();
                         for (final Object argument : arguments) {
-                            if (Config.isPrimitive(argument)) {
+                            if (RudderConfig.isPrimitive(argument)) {
                                 methodArguments.addPrimitive(argument);
                             } else {
                                 final String parameterObjectId = getObjectId(argument);

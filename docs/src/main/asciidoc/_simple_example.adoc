@@ -43,7 +43,7 @@ And our test starter:
 class Tester {
     public static void main(String[] args){
         Class<?> clazz = TestApplication.class;
-        ContaineredApplication<TestApplication> container = new ContaineredApplication<>("SomeName", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", clazz, List.of("raz", "dva"));
+        ContaineredApplication<TestApplication> container = new ContaineredApplication<>("adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", clazz, List.of("raz", "dva"));
         container.start();
 
         final TestApplication application = container.getApplication();

@@ -1,8 +1,9 @@
-package com.github.rudder.shared;
+package com.github.rudder.shared.gson;
 
+import com.github.rudder.shared.http.api.MethodCallResult;
 import com.google.gson.*;
 
-import static com.github.rudder.shared.MethodArguments.MethodArgument;
+import static com.github.rudder.shared.http.api.MethodArguments.MethodArgument;
 
 public class GsonUtil {
 
