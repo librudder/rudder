@@ -53,28 +53,28 @@ public class MethodArguments {
             return objectId;
         }
 
+        public void setObjectId(final String objectId) {
+            this.objectId = objectId;
+        }
+
         public boolean isPrimitive() {
             return isPrimitive;
-        }
-
-        public Object getValue() {
-            return value;
-        }
-
-        public String getObjectClass() {
-            return objectClass;
-        }
-
-        public void setValue(final Object value) {
-            this.value = value;
         }
 
         public void setPrimitive(final boolean primitive) {
             isPrimitive = primitive;
         }
 
-        public void setObjectId(final String objectId) {
-            this.objectId = objectId;
+        public Object getValue() {
+            return value;
+        }
+
+        public void setValue(final Object value) {
+            this.value = value;
+        }
+
+        public String getObjectClass() {
+            return objectClass;
         }
 
         public void setObjectClass(final String objectClass) {

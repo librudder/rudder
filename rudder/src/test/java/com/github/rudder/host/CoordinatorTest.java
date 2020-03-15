@@ -65,9 +65,8 @@ public class CoordinatorTest {
 
     private static class CoordinatorTestRudderApp extends CoordinatorTestApp implements RudderApplication<CoordinatorTestApp> {
 
-        String val2;
-
         private static Consumer<CoordinatorTestRudderApp> callback;
+        String val2;
 
         public CoordinatorTestRudderApp(final String val1) {
             super(val1);

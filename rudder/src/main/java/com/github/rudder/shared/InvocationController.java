@@ -2,7 +2,6 @@ package com.github.rudder.shared;
 
 import com.github.rudder.client.Runner;
 import io.javalin.http.Handler;
-import org.apache.http.util.TextUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
@@ -25,9 +24,9 @@ public class InvocationController implements HttpApp.HandlerDefinition {
 
     @NotNull
     public MethodCallResult invokeMethod(final String name,
-                                                 final Object obj,
-                                                 final Object[] args,
-                                                 final ObjectStorage objects) throws IllegalAccessException, InvocationTargetException {
+                                         final Object obj,
+                                         final Object[] args,
+                                         final ObjectStorage objects) throws IllegalAccessException, InvocationTargetException {
         Class[] argTypes = Arrays.stream(args).map(Object::getClass).toArray(Class[]::new);
 
         final Method declaredMethod = Util.findMethod(obj.getClass(), name, argTypes);
@@ -70,7 +69,7 @@ public class InvocationController implements HttpApp.HandlerDefinition {
 
             final String objectId = methodArgument.getObjectId();
             final String objectClass = methodArgument.getObjectClass();
-            if (!TextUtils.isEmpty(objectClass)) {
+            if (!Util.isEmpty(objectClass)) {
                 try {
                     return Runner.createProxy(client, objects, objectId, Class.forName(objectClass));
                 } catch (ClassNotFoundException e) {
@@ -107,7 +106,7 @@ public class InvocationController implements HttpApp.HandlerDefinition {
 
                 Object[] args = new Object[0];
 
-                if (!TextUtils.isEmpty(body)) {
+                if (!Util.isEmpty(body)) {
                     args = getArguments(body, objects);
                 }
 

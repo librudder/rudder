@@ -8,10 +8,8 @@ import java.util.List;
 
 public class HttpApp {
 
-    private int port;
-
     private final List<HandlerDefinition> handlers = new ArrayList<>();
-
+    private int port;
     private Javalin app;
 
     public HttpApp(final int port) {

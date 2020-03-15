@@ -16,7 +16,7 @@ public class ClientTest {
     public void interfaceTest() throws Throwable {
         final Long someNum = 1337L;
         final var container = new ContaineredApplication<>("Itachi", "adoptopenjdk/openjdk11:x86_64-ubuntu-jdk-11.28", ClientTestRudderApp.class, List.of("" + someNum));
-        container.stop();
+
         container.start();
 
         final ClientTestRudderApp application = container.getApplication();
@@ -57,12 +57,12 @@ public class ClientTest {
 
         private final Long num;
 
-        public static void main(String[] args) {
-
-        }
-
         public ClientTestApp(final String num) {
             this.num = Long.valueOf(num);
+        }
+
+        public static void main(String[] args) {
+
         }
 
         ClientTestInterface obj() {

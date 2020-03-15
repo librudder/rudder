@@ -3,7 +3,6 @@ package com.github.rudder.client;
 import com.github.rudder.shared.*;
 import net.sf.cglib.proxy.*;
 import okhttp3.OkHttpClient;
-import org.apache.http.util.TextUtils;
 import org.objenesis.ObjenesisStd;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -32,11 +31,6 @@ public class Runner {
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .addConverterFactory(GsonConverterFactory.create(GsonUtil.gson))
                 .build();
-    }
-
-
-    public interface __ObjectIdInterface {
-        String __getObjectId();
     }
 
     public static <T> T createProxy(final InvocationClient coordinatorClient,
@@ -79,7 +73,7 @@ public class Runner {
                                 methodArguments.addPrimitive(argument);
                             } else {
                                 final String parameterObjectId = getObjectId(argument);
-                                if (!TextUtils.isEmpty(parameterObjectId)) {
+                                if (!(Util.isEmpty(parameterObjectId))) {
                                     methodArguments.addNonPrimitive(parameterObjectId);
                                 } else {
                                     // looks like it's a local object, lets transfer a link to it
@@ -121,6 +115,10 @@ public class Runner {
             return ((__ObjectIdInterface) object).__getObjectId();
         }
         return null;
+    }
+
+    public interface __ObjectIdInterface {
+        String __getObjectId();
     }
 
 }

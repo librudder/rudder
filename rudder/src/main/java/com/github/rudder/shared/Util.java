@@ -16,4 +16,8 @@ public class Util {
         return matchingMethod;
     }
 
+    public static boolean isEmpty(final String string) {
+        return string == null || string.isEmpty();
+    }
+
 }

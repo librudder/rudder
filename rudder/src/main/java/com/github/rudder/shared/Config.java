@@ -5,9 +5,9 @@ import java.util.List;
 
 public class Config {
 
-	/**
-	 * All primitive object classes
-	 */
+    /**
+     * All primitive object classes
+     */
     private static List<Class<?>> PRIMITIVES = new ArrayList<>();
 
     static {

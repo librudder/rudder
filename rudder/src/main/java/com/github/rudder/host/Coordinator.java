@@ -1,6 +1,7 @@
 package com.github.rudder.host;
 
 import com.github.rudder.RudderApplication;
+import com.github.rudder.client.ContaineredApplication;
 import com.github.rudder.client.Runner;
 import com.github.rudder.shared.*;
 import retrofit2.Retrofit;
@@ -33,7 +34,7 @@ public class Coordinator {
 
             final InvocationController invocationController = new InvocationController(objectStorage);
             httpApp.add(new HelloController(mainObjectId, port -> {
-                final Retrofit retrofit = Runner.createRetrofit("rudder.host", port);
+                final Retrofit retrofit = Runner.createRetrofit(ContaineredApplication.RUDDER_HOST, port);
                 final InvocationClient invocationClient = retrofit.create(InvocationClient.class);
                 invocationController.setClient(invocationClient);
             }));

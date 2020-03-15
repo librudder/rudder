@@ -15,7 +15,6 @@
     </modules>
 
     <properties>
-        <docker-java.version>3.1.5</docker-java.version>
         <classgraph.version>4.8.65</classgraph.version>
         <javax-activation.version>1.1.1</javax-activation.version>
         <retrofit.version>2.7.1</retrofit.version>
@@ -29,6 +28,7 @@
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <junit.version>4.13</junit.version>
         <commons-lang3.version>3.9</commons-lang3.version>
+        <testcontainers.version>1.13.0</testcontainers.version>
 
         <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
         <asciidoctor-maven-plugin.version>1.6.0</asciidoctor-maven-plugin.version>
@@ -36,16 +36,10 @@
         <git-commit-id-plugin.version>4.0.0</git-commit-id-plugin.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
-
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.github.docker-java</groupId>
-                <artifactId>docker-java</artifactId>
-                <version>${docker-java.version}</version>
-            </dependency>
 
             <dependency>
                 <groupId>io.github.classgraph</groupId>
@@ -133,6 +127,11 @@
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
                 <version>${jaxb-impl.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.testcontainers</groupId>
+                <artifactId>testcontainers</artifactId>
+                <version>${testcontainers.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -6,7 +6,7 @@
     </appender>
 
     <root level="INFO">
-        <appender-ref ref="STDOUT" />
+        <appender-ref ref="STDOUT"/>
     </root>
     <logger name="io.javalin" level="WARN"/>
     <logger name="org.eclipse.jetty" level="WARN"/>

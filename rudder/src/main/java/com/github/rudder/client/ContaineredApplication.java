@@ -1,28 +1,25 @@
 package com.github.rudder.client;
 
-import com.github.dockerjava.api.DockerClient;
-import com.github.dockerjava.api.async.ResultCallback;
-import com.github.dockerjava.api.command.CreateContainerResponse;
-import com.github.dockerjava.api.command.InspectContainerResponse;
-import com.github.dockerjava.api.model.*;
-import com.github.dockerjava.core.DockerClientBuilder;
+import com.github.dockerjava.api.model.ExposedPort;
+import com.github.dockerjava.api.model.Ports;
 import com.github.rudder.host.Coordinator;
 import com.github.rudder.shared.HttpApp;
 import com.github.rudder.shared.InvocationController;
 import com.github.rudder.shared.ObjectStorage;
+import com.github.rudder.shared.Util;
 import io.github.classgraph.ClassGraph;
-import org.apache.http.util.TextUtils;
+import org.testcontainers.Testcontainers;
+import org.testcontainers.containers.BindMode;
+import org.testcontainers.containers.GenericContainer;
 import retrofit2.Retrofit;
 
-import java.io.Closeable;
 import java.io.IOException;
 import java.net.Inet4Address;
+import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.URI;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -32,6 +29,7 @@ import static com.github.rudder.host.Coordinator.COORDINATOR_CONTROL_PORT;
 
 public class ContaineredApplication<T> {
 
+    public static final String RUDDER_HOST = "rudder.host";
     /**
      * Name of the container holding application
      */
@@ -53,24 +51,14 @@ public class ContaineredApplication<T> {
     private final List<String> args;
 
     /**
-     * Docker client
-     */
-    private final DockerClient dockerClient;
-
-    /**
-     * Client ID
-     */
-    private String containerId;
-
-    /**
-     * Running container info
-     */
-    private InspectContainerResponse containerInfo;
-
-    /**
      * HTTP application that is handling RPCs
      */
     private HttpApp httpApp;
+
+    /**
+     * Docker container
+     */
+    private GenericContainer container;
 
     public ContaineredApplication(final String containerName, final String imageName, final Class<T> clazz, final List<String> args) {
         this.containerName = containerName;
@@ -78,7 +66,7 @@ public class ContaineredApplication<T> {
         this.clazz = clazz;
         this.args = args;
 
-        this.dockerClient = DockerClientBuilder.getInstance().build();
+//        this.dockerClient = DockerClientBuilder.getInstance().build();
     }
 
     /**
@@ -97,12 +85,10 @@ public class ContaineredApplication<T> {
 
         final NetworkInterface docker0 = NetworkInterface.getByName(networkName);
 
-        final String[] extraHosts = StreamSupport.stream(
+        final String localhostAddressForDocker = StreamSupport.stream(
                 Spliterators.spliteratorUnknownSize(docker0.getInetAddresses().asIterator(), Spliterator.ORDERED),
                 false
-        ).filter(addr -> addr instanceof Inet4Address).findFirst()
-                .map(addr -> new String[]{"rudder.host:" + addr.getHostAddress()})
-                .orElse(new String[0]);
+        ).filter(addr -> addr instanceof Inet4Address).findFirst().map(InetAddress::getHostAddress).orElse("");
 
         List<URI> classpath = new ClassGraph().getClasspathURIs();
 
@@ -128,8 +114,6 @@ public class ContaineredApplication<T> {
                 })
                 .ifPresent(paths::add);
 
-        final List<Bind> binds = paths.stream().map(path -> new Bind(path, new Volume(path), AccessMode.ro)).collect(Collectors.toList());
-
         String classPathString = String.join(":", allPaths);
 
         final ExposedPort coordinatorControlPort = ExposedPort.tcp(9513);
@@ -141,66 +125,20 @@ public class ContaineredApplication<T> {
 
         cmd.addAll(args);
 
-        final CountDownLatch latch = new CountDownLatch(1);
-        dockerClient.pullImageCmd(imageName).exec(new ResultCallback<>() {
-            @Override
-            public void onStart(final Closeable closeable) {
-
-            }
-
-            @Override
-            public void onNext(final PullResponseItem pullResponseItem) {
-
-            }
-
-            @Override
-            public void onError(final Throwable throwable) {
-
-            }
-
-            @Override
-            public void onComplete() {
-                latch.countDown();
-            }
-
-            @Override
-            public void close() throws IOException {
-
-            }
-        });
-
-        latch.await(10, TimeUnit.MINUTES);
-
-        CreateContainerResponse createdContainer = dockerClient
-                .createContainerCmd(imageName)
-                .withEnv()
-                .withPublishAllPorts(true)
-                .withCmd(cmd)
-                .withName(containerName)
-                .withBinds(binds)
-                .withExtraHosts(extraHosts)
-                .withExposedPorts(coordinatorControlPort)
-                .exec();
-
-        this.containerId = createdContainer.getId();
-        dockerClient.startContainerCmd(containerId).exec();
-
-        this.containerInfo = this.dockerClient.inspectContainerCmd(this.containerId).exec();
+        GenericContainer container = new GenericContainer<>(imageName);
+        container.withExposedPorts(COORDINATOR_CONTROL_PORT);
+        paths.forEach(path -> container.withFileSystemBind(path, path, BindMode.READ_ONLY));
+        container.withCommand(cmd.toArray(new String[0]));
+        container.withExtraHost(RUDDER_HOST, localhostAddressForDocker);
+        container.start();
+        this.container = container;
     }
 
     /**
      * Stop container and HTTP RPC app
      */
     public void stop() {
-        try {
-            dockerClient.stopContainerCmd(containerName).exec();
-        } catch (Exception e) {
-        }
-
-        try {
-            dockerClient.removeContainerCmd(containerName).exec();
-        } catch (Exception e) {
-        }
+        container.stop();
 
         if (this.httpApp != null) {
             this.httpApp.stop();
@@ -214,7 +152,7 @@ public class ContaineredApplication<T> {
      * @throws Exception
      */
     public T getApplication() throws Exception {
-        Retrofit retrofit = createRetrofit("localhost", getExposedPort(COORDINATOR_CONTROL_PORT));
+        Retrofit retrofit = createRetrofit("localhost", container.getMappedPort(COORDINATOR_CONTROL_PORT));
 
         final CoordinatorClient coordinatorClient = retrofit.create(CoordinatorClient.class);
 
@@ -222,10 +160,11 @@ public class ContaineredApplication<T> {
         this.httpApp = new HttpApp();
         httpApp.add(new InvocationController(objectStorage, coordinatorClient));
         httpApp.start();
+        Testcontainers.exposeHostPorts(httpApp.getPort());
 
 
         String uid = null;
-        while (TextUtils.isEmpty(uid)) {
+        while (Util.isEmpty(uid)) {
             try {
                 uid = coordinatorClient.hello(httpApp.getPort()).execute().body();
             } catch (IOException e) {
@@ -235,25 +174,6 @@ public class ContaineredApplication<T> {
             }
         }
         return createProxy(coordinatorClient, objectStorage, uid, clazz);
-    }
-
-    /**
-     * Get mapped port of container
-     *
-     * @param originalPort port inside container
-     * @return port outside container
-     */
-    public Integer getExposedPort(final int originalPort) {
-        Ports.Binding[] binding = new Ports.Binding[0];
-        if (containerInfo != null) {
-            binding = containerInfo.getNetworkSettings().getPorts().getBindings().get(new ExposedPort(originalPort));
-        }
-
-        if (binding != null && binding.length > 0 && binding[0] != null) {
-            return Integer.valueOf(binding[0].getHostPortSpec());
-        } else {
-            throw new IllegalArgumentException("Requested port (" + originalPort + ") is not mapped");
-        }
     }
 
 }
