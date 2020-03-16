@@ -12,8 +12,8 @@ image::https://img.shields.io/lgtm/grade/java/g/librudder/rudder.svg?logo=lgtm&l
 image::https://circleci.com/gh/librudder/rudder.svg?style=svg["CircleCI", link="https://circleci.com/gh/librudder/rudder", float="left"]
 [.left]
 image::https://codecov.io/gh/librudder/rudder/branch/master/graph/badge.svg["CodeCov", link="https://codecov.io/gh/librudder/rudder"]
+image:https://img.shields.io/maven-central/v/com.github.librudder/rudder?color=green["Maven Central", link="http://search.maven.org/#artifactdetails%7Ccom.github.librudder%7Crudder", float="left"]
 --
-
 
 This project provides ability to run pieces of Java code inside 🐳Docker
 container and access objects like they're outside.
