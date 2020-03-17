@@ -45,6 +45,20 @@ public class CoordinatorTest {
         Assert.assertEquals(mainObjectKey, objectIdReceivedByHTTP);
     }
 
+    @Test
+    public void voidMethodTest() throws Throwable {
+        final String foo = "foo";
+        final String bar = "bar";
+        Coordinator.main(new String[]{CoordinatorTestRudderApp.class.getName(), foo, bar});
+
+        final Retrofit retrofit = Runner.createRetrofit("localhost", HttpApp.COORDINATOR_CONTROL_PORT);
+        final CoordinatorClient coordinatorClient = retrofit.create(CoordinatorClient.class);
+
+        final String objectIdReceivedByHTTP = coordinatorClient.hello(10_000).execute().body();
+        final CoordinatorTestRudderApp proxy = Runner.createProxy(coordinatorClient, Coordinator.objectStorage, objectIdReceivedByHTTP, CoordinatorTestRudderApp.class);
+        proxy.foobar();
+    }
+
     @Test(expected = IllegalApplicationException.class)
     public void testNotRudderApplication() throws Throwable {
         Coordinator.main(new String[]{CoordinatorTestApp.class.getName(), "don't", "care"});
@@ -57,6 +71,10 @@ public class CoordinatorTest {
 
         public CoordinatorTestApp(final String val1) {
             this.val1 = val1;
+        }
+
+        public void foobar() {
+            System.out.println("foobar!");
         }
 
         public static void main(String[] args) {
