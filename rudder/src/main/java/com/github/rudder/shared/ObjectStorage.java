@@ -42,4 +42,10 @@ public class ObjectStorage {
         return objects.keySet();
     }
 
+    /**
+     * Clear object storage
+     */
+    public void clear() {
+        objects.clear();
+    }
 }

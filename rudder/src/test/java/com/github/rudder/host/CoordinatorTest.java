@@ -4,6 +4,7 @@ import com.github.rudder.RudderApplication;
 import com.github.rudder.client.CoordinatorClient;
 import com.github.rudder.client.Runner;
 import com.github.rudder.shared.http.HttpApp;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,12 @@ import java.util.function.Consumer;
 
 @RunWith(JUnit4.class)
 public class CoordinatorTest {
+
+    @After
+    public void tearDown() throws Exception {
+        Coordinator.objectStorage.clear();
+        Coordinator.httpApp.stop();
+    }
 
     @Test
     public void basicTest() throws Throwable {

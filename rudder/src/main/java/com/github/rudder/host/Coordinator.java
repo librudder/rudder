@@ -17,6 +17,8 @@ public class Coordinator {
 
     static ObjectStorage objectStorage = new ObjectStorage();
 
+    static HttpApp httpApp;
+
     public static void main(String[] args) throws Throwable {
         final String className = args[0];
         final String[] appArgs = Arrays.copyOfRange(args, 1, args.length);
@@ -43,6 +45,7 @@ public class Coordinator {
             httpApp.add(invocationController);
 
             httpApp.start();
+            Coordinator.httpApp = httpApp;
         });
 
         final Method main = Util.findMethod(appClass, "main", new Class[]{String[].class});
