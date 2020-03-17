@@ -22,9 +22,10 @@ public class MethodArguments {
         arguments.add(new MethodArgument(null, objectId, null, false));
     }
 
-    public void addLocalObject(final String objectId, final Object object) {
-        arguments.add(new MethodArgument(null, objectId, object.getClass().getName(), false));
+    public void addLocalObject(final String objectId, final Class clazz) {
+        arguments.add(new MethodArgument(null, objectId, clazz.getName(), false));
     }
+
 
     public static class MethodArgument {
 

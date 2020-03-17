@@ -3,6 +3,7 @@ package com.github.rudder.client;
 import com.github.rudder.shared.*;
 import com.github.rudder.shared.gson.GsonUtil;
 import com.github.rudder.shared.http.InvocationClient;
+import com.github.rudder.shared.http.MethodCallFailedException;
 import com.github.rudder.shared.http.api.MethodArguments;
 import com.github.rudder.shared.http.api.MethodCallResult;
 import net.sf.cglib.proxy.*;
@@ -14,6 +15,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -63,6 +65,7 @@ public class Runner {
         factory.setCallbacks(new Callback[]{
                 (MethodInterceptor) (Object obj, Method method, Object[] arguments, MethodProxy proxy) -> {
                     final String methodName = method.getName();
+                    final Class<?>[] parameterTypes = method.getParameterTypes();
 
                     if (methodName.equals("__getObjectId")) {
                         return objectId;
@@ -72,7 +75,8 @@ public class Runner {
 
                     if (arguments.length > 0) {
                         final MethodArguments methodArguments = new MethodArguments();
-                        for (final Object argument : arguments) {
+                        for (int i = 0; i < arguments.length; i++) {
+                            final Object argument = arguments[i];
                             if (RudderConfig.isPrimitive(argument)) {
                                 methodArguments.addPrimitive(argument);
                             } else {
@@ -82,7 +86,13 @@ public class Runner {
                                 } else {
                                     // looks like it's a local object, lets transfer a link to it
                                     final String id = objectStorage.put(argument);
-                                    methodArguments.addLocalObject(id, argument);
+                                    Class<?> aClass = argument.getClass();
+                                    if (Modifier.isFinal(aClass.getModifiers())) {
+                                        // we can't create proxy of final class object,
+                                        // maybe parameter's class isn't final
+                                        aClass = parameterTypes[i];
+                                    }
+                                    methodArguments.addLocalObject(id, aClass);
                                 }
                             }
                         }
@@ -90,6 +100,11 @@ public class Runner {
                         response = coordinatorClient.invoke(objectId, methodName, methodArguments).execute();
                     } else {
                         response = coordinatorClient.invoke(objectId, methodName).execute();
+                    }
+
+                    if (!response.isSuccessful()) {
+                        final var exception = GsonUtil.gson.fromJson(response.errorBody().string(), RuntimeException.class);
+                        throw new MethodCallFailedException("Failed to call method", exception);
                     }
 
                     final MethodCallResult callResult = response.body();
@@ -103,6 +118,10 @@ public class Runner {
                         Class<?> aClass;
                         try {
                             aClass = Class.forName(callResult.getObjectClass());
+                            if (Modifier.isFinal(aClass.getModifiers())) {
+                                // class is final, we can't subclass it, try using method's return type instead
+                                aClass = method.getReturnType();
+                            }
                         } catch (ClassNotFoundException e) {
                             // this may be a proxy, use a method's return type then
                             aClass = method.getReturnType();

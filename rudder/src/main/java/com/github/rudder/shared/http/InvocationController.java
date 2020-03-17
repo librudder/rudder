@@ -8,6 +8,7 @@ import com.github.rudder.shared.http.api.MethodCallResult;
 import io.javalin.http.Handler;
 import org.jetbrains.annotations.NotNull;
 
+import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -76,10 +77,8 @@ public class InvocationController implements HttpApp.HandlerDefinition {
             if (!Util.isEmpty(objectClass)) {
                 try {
                     return Runner.createProxy(client, objects, objectId, Class.forName(objectClass));
-                } catch (ClassNotFoundException e) {
-                    // todo: rethrow maybe (need rethink, for sure)
-                    e.printStackTrace();
-                    return null;
+                } catch (Throwable t) {
+                    throw new RuntimeException(t);
                 }
             }
 
@@ -118,6 +117,13 @@ public class InvocationController implements HttpApp.HandlerDefinition {
                 context.result(GsonUtil.gson.toJson(res));
             } catch (Throwable t) {
                 t.printStackTrace();
+                final HttpServletResponse response = context.res;
+
+                response.resetBuffer();
+                response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+                response.setHeader("Content-Type", "application/json");
+                response.getOutputStream().print(GsonUtil.gson.toJson(t));
+                response.flushBuffer();
             }
         };
     }
