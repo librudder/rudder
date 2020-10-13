@@ -43,7 +43,7 @@
         <jaxb-impl.version>2.3.2</jaxb-impl.version>
         <jaxb-core.version>2.3.0.1</jaxb-core.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
-        <junit.version>4.13</junit.version>
+        <junit.version>4.13.1</junit.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <testcontainers.version>1.13.0</testcontainers.version>
 
