@@ -45,7 +45,7 @@
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <junit.version>4.13</junit.version>
         <commons-lang3.version>3.9</commons-lang3.version>
-        <testcontainers.version>1.13.0</testcontainers.version>
+        <testcontainers.version>1.16.1</testcontainers.version>
 
         <maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
         <asciidoctor-maven-plugin.version>1.6.0</asciidoctor-maven-plugin.version>
